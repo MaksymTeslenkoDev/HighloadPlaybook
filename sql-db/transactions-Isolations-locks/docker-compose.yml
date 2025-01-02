@@ -1,0 +1,22 @@
+services:
+  percona:
+    image: percona/percona-server:8.0.40-aarch64
+    container_name: ps_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: store
+      MYSQL_USER: bob
+      MYSQL_PASSWORD: secretbob
+    ports:
+      - "3307:3306"
+    volumes:
+      - store_data:/var/lib/mysql
+      - ./my.cnf:/etc/my.cnf
+    networks:
+      - ps_mysql_network
+volumes:
+  store_data:
+
+networks:
+  ps_mysql_network:
+    driver: bridge
