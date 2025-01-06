@@ -65,4 +65,45 @@ Such snapshot stores in memory, and when memory size won't be enough will be upl
 
 ## Isolation Levels 
 
+Can be set globally and per session. Isolation levels determines the work behavior with "snapshots", and controls the occur of some problems of concurrent access.
 
+### Repeatable Read 
+
+Default in InnoDB. 
+
+A consistent read (SELECT ...), during one transaction, reads from the initial snapshot and doesn't block anything, it means that the same queries will always return the same result. 
+
+For blocking reads, (SELECT ... FOR UPDATE/LOCK IN SHARE MODE) update and delete, such queries won't use initial "snapshot", instead they will set a lock for current index in the db. Based on the type of index and type of condition (unique or range) in WHERE clause, InnoDB will lock either range (gap-locks, next-key lock) or record lock. 
+
+**Use Case:** Read Heavy systems, where we don't want to create a "snapshot" multiple times during one transaction and system can tolerate phantom reads, and can't afford non-repeatable reads. 
+
+### Read Commited
+
+Each consistent read (SELECT ...) will create own "snapshot" and will read data from it. 
+For blocking reads, (SELECT ... FOR UPDATE/LOCK IN SHARE MODE) update and delete, InnoDB locks only index records, not gaps. It allows new records to be inserted next to locked records. 
+
+Because gap lock is disabled, **phantom rows** may occur because other sessions may insert new lines into gaps.
+
+If some transaction tx2 will update or insert some rows between first select (S1) and second select (S2) and was commited, "snapshot" created by S2 will get updated with changes of tx2, making imposible of occuring phantom-reads. 
+
+But we have an overhead in memory, since each select creates new snapshot wich will be stored in the memory. And thus making such isolation level not appropriate for read-heavy systems. 
+
+**Use cases**: This is the most commonly used isolation level in many databases. It's a good balance between consistency and concurrency and is suitable for most applications where you cannot tolerate dirty reads but can afford non-repeatable reads. 
+
+**Example**: An e-commerce application where you fetch the price of a product and price should be actual on the moment of each request. It's okay if the price changes in a subsequent transaction, but you don't want to read an uncommitted price. 
+
+**Not Suitable for**: News platforms, tons of consistend reads (SELECT), platform can freely tolerate when during some request some news or news update rwon't be returned. Eventually "missed" news will come in subsequent requests. 
+
+### Read Uncommited
+
+Disable locking. All SELECT queries are read in a non-blocking manner. Changes to an incomplete transaction can be read in other transactions, and these changes can also be rolled back later. This is the so-called "dirty read".
+
+**Use Case:** When you need maximum throughput and the application can tolerate dirty reads. This is appropriate in scenarios where you're performing analytics or reporting queries where absolute accuracy at the moment of transaction is not critical. 
+
+**Example:** A real-time dashboard that shows trending data, where it's okay if some of the data is not yet committed.
+
+### Serializable 
+
+Simmilar to REPETABLE READ, but all sonsistent reads (SELECT) are implicitly converted to SELECT ... LOCK IN SHARE MODE if autocommit is disabled. If enabled each SELECT goes into seperate transaction. 
+
+Serializable guarantees 100% consistency, as a result any problem of concurrent access can occur. All transaction wich insert, modify or delete data, will be worked sequentially. LOCK IN SHARE MODE allows read, locks only write.
