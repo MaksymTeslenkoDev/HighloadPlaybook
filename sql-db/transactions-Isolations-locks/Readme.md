@@ -36,11 +36,12 @@ A lock is granting to the requesting transaction if is **compatible** with exist
 Transaction will be waiting for resolving lock which is bloking her, two things can happen, either lock will be released and our transaction successfully will run or transaction will fail with timeout. 
 
 
-    X	        IX	        S	        IS
-X	Conflict	Conflict	Conflict	Conflict
-IX	Conflict	Compatible	Conflict	Compatible
-S	Conflict	Conflict	Compatible	Compatible
-IS	Conflict	Compatible	Compatible	Compatible
+|       | X         | IX        | S         | IS        |
+|-------|-----------|-----------|-----------|-----------|
+| **X** | Conflict  | Conflict  | Conflict  | Conflict  |
+| **IX**| Conflict  | Compatible| Conflict  | Compatible|
+| **S** | Conflict  | Conflict  | Compatible| Compatible|
+| **IS**| Conflict  | Compatible| Compatible| Compatible|
 
 
 The status of the locks can be seen by running `show engine innodb status`. 

@@ -53,7 +53,6 @@ If the database uses only InnoDB tables, set this value to the maximum possible 
 
 Buffer stores in RAM, InnoDB tends to proccess queiries synchronously and stores data in memory, and latter asynchorously sync data to disk. 
 
-
 `show variables like '%innodb_buffer_pool_size%';` will return current size of buffer in bytes. 
 It means that when size of data in db will be more than pool_size value, operations will be uploaded directly to the disk. 
 **Three the most common things which stores in buffer: temporar tables, caches and indexes.**
@@ -61,5 +60,34 @@ It means that when size of data in db will be more than pool_size value, operati
 Check amount of I/O operations in monitor system, if this amount is growing it signals that we've reached the buffer pool size. And if usage of RAM, in monitor systems, reached some value, wich is less then the machine RAM memory size, it signals that we 've reached buffer size limit. The easiest and efficient solution will be to increase this limit. 
 
 #### Redo logs
+When systems crashed redo logs are used to recover on such crashes. So simply speeking redo logs it is a files where intermediate results of operations are stored. The less size of redo log, the more frequenly data will be sync to the disk, so in result we will get more opeations with the disk. But there is a side effect of big size redo logs, with bigger redo logs MySQl will take more time to recover from it.
 
+The redo log file size is determined by innodb_redo_log_capacity. InnoDB tries to maintain 32 redo log files of the same size, with each file equal to **1/32 * innodb_redo_log_capacity**. Therefore, changing the **innodb_redo_log_capacity** setting changes the size of the redo log files.
 
+`innodb_log_file_size = 512M # Redo log file size. `
+
+If **innodb_redo_log_capacity** is not defined, and if neither **innodb_log_file_size** or **innodb_log_files_in_group** are defined, then the default **innodb_redo_log_capacity** value is used.
+
+`innodb_log_buffer_size = 2M # Uncommitted transactions buffer size`
+
+The value of this parameter should be changed in cases where you use large fields like BLOB or TEXT.
+
+**innodb_flush_log_at_trx_commit**
+
+`innodb_flush_log_at_trx_commit = 2 # logic for writing transactions to the log and to disk`.
+
+**Attention!** Changing this parameter alone can change the speed of writing to the database hundreds of times. It determines whether MySQL will flush each operation to disk. The following options are possible:
+- **0** - writes to the log and flushes to disk once per second, but does nothing for each commit. It means that we can't quaranty durability with this option. Because on system crashes, we can lost operations (commits) wich wasn't sync to relay log during las second. It is suitable for systems where each operation proccesses in seperate transaction, for example with autocommit=on. 
+- **1** - writes to the log and flushes the log to disk every transaction (commit). Default value. The slowest but the safest.
+- **2** - writes to the log every commit, flushes to disk once a second.
+
+**The main idea of optimization for Sql DBs remains the same, we always should try to work less with disk and more with ram. But it has consequences and trade-offs which should be included.** 
+
+### Indexes 
+Indexes are used to increase the perfomance of read queries. There is a side effect of using waste amount of indexes, write operations will become slower with new added index.  
+
+The simple rule, is that in read heavy systems we need to be sure that we have enough indexes and is ok to have waste amount of them. But if system is write heavy and we need to solve the issue with slow writes, two possible ways to optimize exists, either wrapp operations in transactions or decrease the size of index tree. 
+
+| MySQL Tunner | [MySQL Tunner](https://github.com/major/MySQLTuner-perl) | -  tool to analyze and optimize your database. This tool will solve 80% of issues for 20% of time. 
+
+| Repository with practical test cases of speed and performance of given parameters | [MySQL_tuning_indexes_strategies](https://github.com/MaksymTeslenkoDev/MySQL_tuning_indexes_strategies) |
