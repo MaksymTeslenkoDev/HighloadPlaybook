@@ -4,18 +4,18 @@ services:
     container_name: ps_mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: store
+      MYSQL_DATABASE: supply_chain_management
       MYSQL_USER: bob
       MYSQL_PASSWORD: secretbob
     ports:
       - "3307:3306"
     volumes:
-      - store_data:/var/lib/mysql
+      - supply_chain_data:/var/lib/mysql
       - ./my.cnf:/etc/my.cnf
     networks:
       - ps_mysql_network
 volumes:
-  store_data:
+  supply_chain_data:
 
 networks:
   ps_mysql_network:
