@@ -1,91 +1,231 @@
 # Supply Chain Management System
 
 ## Overview
-The **Supply Chain Management System** is a software application designed to manage and optimize the movement of goods, inventory, and orders between suppliers, warehouses, and customers. The system allows users to track stock levels, place and fulfill customer orders, and manage logistics efficiently. It provides a robust foundation for practicing SQL queries and implementing CRUD operations for a real-world domain.
+
+The **Supply Chain Management System** models a real-world supply chain, tracking **suppliers, warehouses, inventory, customer orders, and manufacturing processes**. The system supports procurement, inventory tracking, customer orders, manufacturing, and logistics.
 
 ---
 
-## System Features
-1. **Supplier Management**: Manage information about suppliers providing goods.
-2. **Warehouse Management**: Track and update storage facilities and product inventories.
-3. **Product Catalog**: Maintain a catalog of products with details such as supplier, price, and category.
-4. **Inventory Tracking**: Monitor stock levels of products in different warehouses.
-5. **Order Management**: Place, update, and track customer orders.
-6. **Shipment Tracking**: Manage the logistics of delivering orders from warehouses to customers.
+## Database Tables Overview
+
+This system includes the following tables:
+
+### 1. Suppliers
+
+Stores details of suppliers providing raw materials or finished goods.
+
+- **Relationships**:
+  - Supplies **Products**.
+
+#### Key Fields
+
+- `supplier_id` (PK) - Unique identifier.
+- `name` - Supplier’s name.
+- `contact_info` - Contact details.
+- `location` - Supplier’s address.
 
 ---
 
-## Key Entities
-- **Suppliers**: Organizations or vendors supplying goods.
-- **Warehouses**: Locations storing products for distribution.
-- **Products**: Items managed in the system and ordered by customers.
-- **Inventory**: Tracks product quantities in each warehouse.
-- **Customers**: Individuals or businesses placing orders.
-- **Orders**: Customer purchases with associated products.
-- **Shipments**: Delivery records for fulfilling customer orders.
+### 2. Warehouses
+
+Represents storage facilities where products and raw materials are kept.
+
+- **Relationships**:
+  - Stores **Products** via **Inventory**.
+  - Ships **Orders** via **Shipments**.
+
+#### Key Fields
+
+- `warehouse_id` (PK) - Unique identifier.
+- `name` - Warehouse name.
+- `location` - Warehouse location.
+- `capacity` - Maximum storage.
 
 ---
 
-## CRUD Operations
+### 3. Products
 
-### 1. Supplier Management
-- **Create**: Add a new supplier with contact and location details.
-- **Read**: View a list of suppliers or search for a specific one.
-- **Update**: Edit supplier details (e.g., contact info).
-- **Delete**: Remove a supplier if they have no linked products.
+Represents both **finished products** and **raw materials/components**.
 
-### 2. Warehouse Management
-- **Create**: Add new warehouse records with capacity and location details.
-- **Read**: View all warehouses and their inventory status.
-- **Update**: Modify warehouse capacity or location.
-- **Delete**: Remove a warehouse if no inventory or shipments are associated.
+- **Relationships**:
+  - Can be **supplied** by **Suppliers**.
+  - Stored in **Warehouses** via **Inventory**.
+  - Ordered by **Customers** via **Orders**.
+  - Can be **manufactured** using **sub-products** from **Bill of Materials (BOM)**.
 
-### 3. Product Catalog
-- **Create**: Add new products with details like category, supplier, and price.
-- **Read**: View and search products by category or supplier.
-- **Update**: Update product price or supplier information.
-- **Delete**: Remove a product if it’s not linked to inventory or orders.
+#### Key Fields
 
-### 4. Inventory Management
-- **Create**: Add inventory for a product in a warehouse.
-- **Read**: View inventory levels across warehouses.
-- **Update**: Adjust stock levels during restocking or sales.
-- **Delete**: Remove inventory entries if a product is discontinued.
-
-### 5. Customer Management
-- **Create**: Register a new customer with contact and address details.
-- **Read**: View customer profiles and order history.
-- **Update**: Modify customer contact info or address.
-- **Delete**: Remove a customer if no active orders exist.
-
-### 6. Order Management
-- **Create**: Place new orders for customers.
-- **Read**: View all orders, filter by status, or search by customer.
-- **Update**: Modify order status (e.g., Pending → Shipped).
-- **Delete**: Cancel orders if they haven’t been shipped.
-
-### 7. Shipment Tracking
-- **Create**: Schedule shipments for orders.
-- **Read**: View shipment history and track status (e.g., In Transit).
-- **Update**: Modify shipment details (e.g., delivery date).
-- **Delete**: Cancel shipments if the associated order is canceled.
+- `product_id` (PK) - Unique identifier.
+- `name` - Product name.
+- `category` - Type of product.
+- `supplier_id` (FK) - Supplier reference.
+- `price` - Unit price.
+- `is_finished_product` (BOOLEAN) - `TRUE` if a final product, `FALSE` if a raw material.
 
 ---
 
-## System Purpose
-The Supply Chain Management System aims to:
-- Simulate real-world database interactions.
-- Serve as a practice ground for CRUD operations and SQL logic.
-- Provide a scalable foundation for managing suppliers, inventory, orders, and logistics.
+### 4. Bill of Materials (BOM)
+
+Tracks which **raw materials** are required to manufacture a **finished product**.
+
+- **Self-referencing Relationship**:
+  - Links **Products** as **components** of other **Products**.
+
+#### Key Fields
+
+- `bom_id` (PK) - Unique identifier.
+- `finished_product_id` (FK → Products) - The **final product** being manufactured.
+- `component_product_id` (FK → Products) - The **raw material** needed.
+- `quantity_required` - How many units of the raw material are needed.
 
 ---
 
-## Initial Task Overview
-1. **Set up Database**: Design and implement the database schema.
-2. **Populate Tables**: Add sample data for suppliers, warehouses, products, and customers.
-3. **CRUD Functionality**: Implement base CRUD operations for each entity.
-4. **Reporting and Queries**: Create SQL queries to:
-   - List products with low inventory.
-   - Track orders and shipments for a specific customer.
-   - Identify the busiest warehouse based on orders fulfilled.
-5. **Testing**: Test all operations for consistency and accuracy.
+### 5. Inventory
+
+Tracks **stock levels** of products in **warehouses**.
+
+- **Relationships**:
+  - Links **Products** and **Warehouses**.
+
+#### Key Fields
+
+- `inventory_id` (PK) - Unique identifier.
+- `warehouse_id` (FK → Warehouses) - Where the product is stored.
+- `product_id` (FK → Products) - The stored product.
+- `quantity` - Available stock.
+
+---
+
+### 6. Customers
+
+Stores customer details for placing orders.
+
+- **Relationships**:
+  - Can place **Orders**.
+
+#### Key Fields
+
+- `customer_id` (PK) - Unique identifier.
+- `name` - Customer’s name.
+- `email` - Contact email.
+- `phone_number` - Contact number.
+- `address` - Delivery address.
+
+---
+
+### 7. Orders
+
+Stores **customer purchases**.
+
+- **Relationships**:
+  - Links to **Customers**.
+  - Contains multiple **Products** via **Order Details**.
+  - Fulfilled by **Shipments**.
+
+#### Key Fields
+
+- `order_id` (PK) - Unique identifier.
+- `customer_id` (FK → Customers) - The buyer.
+- `order_date` - Date of purchase.
+- `status` - (`Pending`, `Shipped`, `Delivered`, `Canceled`).
+
+---
+
+### 8. Order Details
+
+Tracks which **products** are included in an **order**.
+
+- **Relationships**:
+  - Links **Orders** and **Products**.
+
+#### Key Fields
+
+- `order_detail_id` (PK) - Unique identifier.
+- `order_id` (FK → Orders) - The order reference.
+- `product_id` (FK → Products) - The purchased product.
+- `quantity` - Number of units.
+- `price` - Unit price.
+
+---
+
+### 9. Shipments
+
+Tracks **order deliveries** from **warehouses** to **customers**.
+
+- **Relationships**:
+  - Ships **Orders**.
+  - Originates from a **Warehouse**.
+
+#### Key Fields
+
+- `shipment_id` (PK) - Unique identifier.
+- `order_id` (FK → Orders) - The shipped order.
+- `warehouse_id` (FK → Warehouses) - The warehouse shipping the product.
+- `shipment_date` - When it was sent.
+- `delivery_date` - Expected delivery.
+
+---
+
+### 10. Manufacturing Orders
+
+Tracks **production processes** for making finished products.
+
+- **Relationships**:
+  - Uses **raw materials** from **Bill of Materials (BOM)**.
+  - Consumes stock from **Production Inventory**.
+
+#### Key Fields
+
+- `manufacturing_order_id` (PK) - Unique identifier.
+- `finished_product_id` (FK → Products) - What is being manufactured.
+- `quantity_to_produce` - Number of units.
+- `status` - (`Pending`, `In Progress`, `Completed`).
+- `start_date`, `end_date` - Production timeline.
+
+---
+
+## How the System Works
+
+### 1. Ordering Products
+
+1. A **Customer** places an **Order** for a **Product**.
+2. The system **checks Inventory** in the **Warehouses**.
+3. If stock exists, a **Shipment** is created.
+4. If stock **does not exist**, a **Manufacturing Order** is triggered.
+
+---
+
+### 2. Manufacturing a Product
+
+1. A **Manufacturing Order** is created.
+2. The system **retrieves BOM requirements**.
+3. It **checks Production Inventory**:
+   - If **enough materials exist**, production starts.
+   - If **materials are missing**, they are ordered from **Suppliers**.
+4. Once materials are received, production **begins**.
+5. After **completion**, the finished product is **added to Inventory**.
+
+---
+
+### 3. Shipping the Order
+
+1. The **Warehouse** prepares the order.
+2. A **Shipment** is created and tracked.
+3. Once delivered, the **Order Status** updates to **"Delivered"**.
+
+---
+
+## Final Relationships Summary
+
+| Table                                       | Relationship                                                                    |
+| ------------------------------------------- | ------------------------------------------------------------------------------- |
+| Products ↔ Suppliers                        | A **Supplier** provides **Products**.                                           |
+| Warehouses ↔ Inventory                      | A **Warehouse** stores **Products**.                                            |
+| Products ↔ BOM                              | A **Product** is made of **sub-products** (self-referencing).                   |
+| Orders ↔ Customers                          | A **Customer** places **Orders**.                                               |
+| Orders ↔ Order Details                      | An **Order** contains multiple **Products**.                                    |
+| Orders ↔ Shipments                          | An **Order** is fulfilled via **Shipments**.                                    |
+| Manufacturing Orders ↔ BOM                  | A **Manufacturing Order** uses raw materials from **BOM**.                      |
+| Manufacturing Orders ↔ Production Inventory | **Production Inventory** ensures raw materials are available for manufacturing. |
+
+---

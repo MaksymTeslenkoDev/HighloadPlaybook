@@ -1,8 +1,9 @@
 CREATE TABLE IF NOT EXISTS `Supplier`(
     supplier_id INT AUTO_INCREMENT PRIMARY KEY,
-    domain varchar(255) not null UNIQUE KEY,
-    name varchar(255) not null, 
-    phone INT 
+    supplier_name varchar(255) not null UNIQUE KEY,
+    brand_name varchar(255) not null,
+    support_phone INT,
+    support_email varchar(255) not null,
     location VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
