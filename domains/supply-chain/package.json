@@ -1,0 +1,17 @@
+{
+  "name": "supply-chain",
+  "version": "1.0.0",
+  "description": "## Overview",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:seed": "set -a && source .env && cat db/seed.sql | docker exec -i ps_mysql mysql -u root -p$DB_ROOT_PASSWORD"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  }
+}
