@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:seed": "set -a && source .env && cat db/seed.sql | docker exec -i ps_mysql mysql -u root -p$DB_ROOT_PASSWORD"
+    "db:init-tables": "set -a && source .env && cat db/structure.sql | docker exec -i ps_mysql mysql -u root -p$DB_ROOT_PASSWORD --database=$DB_NAME",
+    "db:seed": "set -a && source .env && cat db/seed.sql | docker exec -i ps_mysql mysql -u root -p$DB_ROOT_PASSWORD --database=$DB_NAME"
   },
   "keywords": [],
   "author": "",

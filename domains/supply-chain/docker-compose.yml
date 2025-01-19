@@ -9,6 +9,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: bob
+      MYSQL_PASSWORD: secretbob
     volumes:
       - supply_chain_data:/var/lib/mysql
       - ./cfg/my.cnf:/etc/my.cnf

@@ -1,17 +1,17 @@
 -- Seed data for Suppliers
-INSERT INTO Suppliers (name, contact_info, location) VALUES
-('Tech Parts Ltd', 'techparts@example.com', 'New York, USA'),
-('Global Raw Materials', 'globalraw@example.com', 'London, UK'),
-('Mega Components', 'megacomp@example.com', 'Berlin, Germany');
+INSERT INTO Supplier (supplier_name, brand_name, support_phone, support_email, location) VALUES
+('Tech Parts Ltd', 'TechBrand', 123456789, 'support@techparts.com', 'New York, USA'),
+('Global Raw Materials', 'GlobalMaterials', 987654321, 'contact@globalraw.com', 'London, UK'),
+('Mega Components', 'MegaComp', 555555555, 'info@megacomp.com', 'Berlin, Germany');
 
 -- Seed data for Warehouses
-INSERT INTO Warehouses (name, location, capacity) VALUES
+INSERT INTO Warehouse (name, location, capacity) VALUES
 ('New York Warehouse', 'New York, USA', 5000),
 ('London Storage', 'London, UK', 3500),
 ('Berlin Distribution', 'Berlin, Germany', 4000);
 
 -- Seed data for Products
-INSERT INTO Products (name, category, supplier_id, price, is_finished_product) VALUES
+INSERT INTO Product (name, category, supplier_id, price, is_finished_product) VALUES
 ('CPU Chip', 'Electronics', 1, 120.00, FALSE),
 ('Screen Display', 'Electronics', 2, 80.00, FALSE),
 ('Battery Pack', 'Energy', 3, 50.00, FALSE),
@@ -36,13 +36,13 @@ INSERT INTO Inventory (warehouse_id, product_id, quantity) VALUES
 (3, 3, 200); -- Battery Packs in Berlin Distribution
 
 -- Seed data for Customers
-INSERT INTO Customers (name, email, phone_number, address) VALUES
+INSERT INTO Customer (name, email, phone_number, address) VALUES
 ('John Doe', 'johndoe@example.com', '1234567890', '123 Main St, New York, USA'),
 ('Alice Brown', 'alicebrown@example.com', '2345678901', '456 Park Ave, London, UK'),
 ('Michael Smith', 'michaelsmith@example.com', '3456789012', '789 Tech Rd, Berlin, Germany');
 
 -- Seed data for Orders
-INSERT INTO Orders (customer_id, order_date, status, total_amount) VALUES
+INSERT INTO Orders (customer_id, order_date, status, customer_amount) VALUES
 (1, NOW(), 'Pending', 1400.00),
 (2, NOW(), 'Shipped', 700.00),
 (3, NOW(), 'Delivered', 1000.00);
@@ -55,11 +55,11 @@ INSERT INTO Order_Details (order_id, product_id, quantity, price) VALUES
 (3, 5, 1, 300.00); -- Michael Smith orders 1 Smart Watch
 
 -- Seed data for Shipments
-INSERT INTO Shipments (order_id, warehouse_id, shipment_date, delivery_date, status) VALUES
+INSERT INTO Shipment (order_id, warehouse_id, shipment_date, delivery_date, status) VALUES
 (2, 1, NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY), 'In Transit'),
 (3, 3, NOW(), DATE_ADD(NOW(), INTERVAL 5 DAY), 'Delivered');
 
 -- Seed data for Manufacturing Orders
-INSERT INTO Manufacturing_Orders (finished_product_id, quantity_to_produce, production_start_date, status) VALUES
+INSERT INTO Manufacturing_Order (finished_product_id, quantity_to_produce, production_start_date, status) VALUES
 (4, 50, NOW(), 'In Progress'),
 (5, 30, NOW(), 'Pending');

@@ -6,6 +6,70 @@ The **Supply Chain Management System** models a real-world supply chain, trackin
 
 ---
 
+## Database Setup
+
+### Prerequisites
+To run this database, ensure you have **Docker** and **Docker Compose** installed, and that your environment variables are correctly set in a `.env` file.
+
+### Docker Compose Configuration
+The database runs inside a **Percona MySQL** container, as defined in the `docker-compose.yml` file:
+
+```yaml
+services:
+  percona:
+    image: percona/percona-server:8.0.40-aarch64
+    container_name: ps_mysql
+    ports:
+      - "3307:3306"
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: bob
+      MYSQL_PASSWORD: secretbob
+    volumes:
+      - supply_chain_data:/var/lib/mysql
+      - ./cfg/my.cnf:/etc/my.cnf
+    networks:
+      - ps_mysql_network
+volumes:
+  supply_chain_data:
+
+networks:
+  ps_mysql_network:
+    driver: bridge
+```
+
+### Running the Database
+To start the database container, run:
+
+```sh
+docker-compose up -d
+```
+
+This will start the MySQL server inside a **Docker container** with the configured settings.
+
+### Initializing Database Tables
+To create all necessary tables inside the MySQL database, run:
+
+```sh
+npm run db:init-tables
+```
+
+This command executes the SQL schema file (`db/structure.sql`) inside the **Percona MySQL container**.
+
+### Seeding the Database
+To populate the database with sample data, run:
+
+```sh
+npm run db:seed
+```
+
+This will execute the `db/seed.sql` script inside the running MySQL container.
+
+---
+
 ## Database Tables Overview
 
 This system includes the following tables:
