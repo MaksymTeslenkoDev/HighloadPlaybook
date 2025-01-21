@@ -1,10 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { TypeCompiler } from '@sinclair/typebox/compiler';
-import { Type } from '@sinclair/typebox';
 
-// Fix for __dirname issue in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -33,24 +30,14 @@ async function generateSchemas() {
 
       if (schemaName && schemaModule[schemaName]) {
         const schema = schemaModule[schemaName];
-
-        // Ensure the schema is a valid TypeBox schema
         if (!schema || typeof schema !== 'object' || !schema[Symbol.for('TypeBox.Kind')]) {
           console.error(`❌ Invalid TypeBox schema in ${file}`);
           continue;
         }
 
-        const compiledSchema = TypeCompiler.Compile(schema);
-
-        if (!compiledSchema || !compiledSchema.Schema) {
-          console.error(`❌ Failed to compile schema for ${file}`);
-          continue;
-        }
-
         const outputFilePath = path.join(OUTPUT_DIR, `${file.replace('.ts', '.json')}`);
 
-        // ✅ Ensure that compiledSchema.Schema exists before writing
-        fs.writeFileSync(outputFilePath, JSON.stringify(compiledSchema.Schema, null, 2), 'utf-8');
+        fs.writeFileSync(outputFilePath, JSON.stringify(schema, null, 2), 'utf-8');
 
         console.log(`✅ Generated JSON schema: ${outputFilePath}`);
       } else {
@@ -60,5 +47,4 @@ async function generateSchemas() {
   }
 }
 
-// Run the script properly
 generateSchemas().catch(console.error);
