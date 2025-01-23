@@ -1,7 +1,7 @@
 ## SQL databases 
 Since db works with disk we need to know how to optimize the work with it because it is one of the biggest thing wich can impact the performance. 
 
-**MySql Architecture**
+#### MySql Architecture**
 ![MySQL srchitecture](./images/mysql-architecture.png)
 
 ### Connection management and security 

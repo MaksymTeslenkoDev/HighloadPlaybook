@@ -63,3 +63,28 @@ appendfilename "appendonly.aof" # The name of the append only file (default: "ap
 appendfsync everysec
 ```
 
+### Other config params 
+
+```
+tcp-backlog 512 # max amount of connections that socket listen
+maxclients 10000 # max number of connected clients at the same time
+maxmemory 1572864000 # memory usage limit to the specified amount of bytes
+```
+
+### Keys Eviction 
+
+Sometimes you are facing up with the situation, when you trying to put in more keys then system allows (maxmemory limit). Redis can handle this in 6 different ways. This process is controlled by eviction policy. Available modes:
+
+![LRUvsLFU](./images/keys-eviction.png)
+
+- **volatile-lru** Evict using approximated LRU among the keys with an expire set.
+- **allkeys-lru** Evict any key using approximated LRU.
+- **volatile-lfu** Evict using approximated LFU among the keys with an expire set.
+- **allkeys-lfu** Evict any key using approximated LFU.
+- **volatile-random** Remove a random key among the ones with an expire set.
+- **allkeys-random** Remove a random key, any key.
+- **volatile-ttl** Remove the key with the nearest expire time (minor TTL)
+- **noeviction** Don't evict anything, just return an error on write operations.
+
+**LRU** means Least Recently Used. **LFU** means Least Freq uently Used. 
+**volatile** keys are those keys wich has TTL.
