@@ -71,7 +71,7 @@ maxclients 10000 # max number of connected clients at the same time
 maxmemory 1572864000 # memory usage limit to the specified amount of bytes
 ```
 
-### Keys Eviction 
+## Keys Eviction 
 
 Sometimes you are facing up with the situation, when you trying to put in more keys then system allows (maxmemory limit). Redis can handle this in 6 different ways. This process is controlled by eviction policy. Available modes:
 
@@ -88,3 +88,17 @@ Sometimes you are facing up with the situation, when you trying to put in more k
 
 **LRU** means Least Recently Used. **LFU** means Least Freq uently Used. 
 **volatile** keys are those keys wich has TTL.
+
+## Troubleshooting
+
+Redis command INFO might be very useful when you trying to figure out what went wrong:
+
+`redis-cli -a [your password] INFO stats`
+
+Here, for example, you can find information about missed and evicted keys:
+
+```
+evicted_keys:0
+keyspace_hits:776
+keyspace_misses:470
+```
