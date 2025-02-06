@@ -8,13 +8,16 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:init-tables": "set -a && source .env && cat db/structure.sql | docker exec -i ps_mysql mysql -u root -p$DB_ROOT_PASSWORD --database=$DB_NAME",
     "db:seed": "set -a && source .env && cat db/seed.sql | docker exec -i ps_mysql mysql -u root -p$DB_ROOT_PASSWORD --database=$DB_NAME",
-    "generate:schemas": "tsx scripts/generate-json-schemas"
+    "generate:schemas": "tsx scripts/generate-json-schemas",
+    "lint": "eslint src/server",
+    "lint:fix": "eslint --fix src"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^22.10.7",
+    "eslint-config-standard-with-typescript": "^34.0.1",
     "prettier": "^3.4.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
