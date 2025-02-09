@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/node": "^18.19.68",
     "eslint-config-standard-with-typescript": "^34.0.1",
+    "fastify-cli": "^7.3.0",
     "fastify-tsconfig": "^1.0.1",
     "rimraf": "^5.0.0",
     "tsx": "^3.12.6",
@@ -19,6 +20,7 @@
   },
   "scripts": {
     "build": "rimraf dist && tsc",
+    "start": "fastify start --options server.ts",
     "dev": "tsx watch server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
