@@ -1,8 +1,12 @@
-import { GetProductParamsType, GetProductResponseType } from './product.schema';
+import {
+  GetProductParamsType,
+  GetProductResponseType,
+} from './schemas/product';
 
 export async function getProduct(
   params: GetProductParamsType,
 ): Promise<GetProductResponseType> {
+    console.log(this.db())
   return {
     name: 'name',
     price: 1020,
@@ -10,6 +14,8 @@ export async function getProduct(
   };
 }
 
-export default (context: any) => {
-  get: getProduct.bind(context);
-};
+export function product(context: any) {
+  return {
+    get: getProduct.bind(context),
+  }
+}

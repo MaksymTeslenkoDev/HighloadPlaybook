@@ -1,13 +1,13 @@
 import { join, dirname } from 'node:path';
 import Fastify from 'fastify';
 import AutoLoad from '@fastify/autoload';
+
 import Swagger from '@fastify/swagger';
 import SwaggerUI from '@fastify/swagger-ui';
 import ws from '@fastify/websocket';
 import { fileURLToPath } from 'node:url';
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
+import ApiSchemas from './plugins/api-schemas-loader';
+import LoadApi from './plugins/load-api';
 
 const fastify = Fastify({
   logger: true,
@@ -18,15 +18,10 @@ const fastify = Fastify({
   },
 });
 
-fastify.register(AutoLoad, {
-  dir: join(__dirname, 'schemas'),
-  indexPattern: /^loader.ts$/i,
-  options: { path: join(__dirname, 'api') },
-});
+fastify.register(ApiSchemas, { path: join(__dirname, 'api/schemas') });
 
-fastify.get('/', {}, (req, res) => {
-  console.log(fastify.getSchemas());
-});
+fastify.register(LoadApi, {path: join(__dirname, 'api') })
+
 // const fastify = Fastify({
 //   logger: true,
 //   ajv: {
@@ -79,7 +74,14 @@ fastify.get('/', {}, (req, res) => {
 // //   dir: join(__dirname, 'routes'),
 // // });
 
-fastify.listen({ host: '0.0.0.0', port: 3000 }).catch((err) => {
-  fastify.log.error(err);
-  process.exit(1);
-});
+fastify
+  .listen({ host: '0.0.0.0', port: 3000 })
+  .then(() => {
+    console.log(fastify.getSchemas());
+    console.log("api.product ", fastify.hasDecorator('api.product'))
+    fastify[`api.product`].get().then(v=>console.log("res ", v))
+  })
+  .catch((err) => {
+    fastify.log.error(err);
+    process.exit(1);
+  });
