@@ -1,26 +1,19 @@
 import { TypeCompiler } from '@sinclair/typebox/compiler';
 import fp from 'fastify-plugin';
-import { loadDir } from '../src/load';
+import { flatObject, loadDir } from '../src/load';
 
-export default fp(async function apiSchemaLoader(
+export default fp(async function shemaLoader(
   fastify,
-  opts: { path: string },
+  opts: { apiPath: string },
 ) {
-  const schemas = await loadDir(opts.path);
-  for (const serviceKey in schemas) {
-    const service = schemas[serviceKey];
-    for (const [methodName, schema] of Object.entries<{ params; returns }>(
-      service,
-    )) {
-      fastify.addSchema({
-        $id: `schema:${serviceKey}:${methodName}:request`,
-        ...TypeCompiler.Compile(schema.params).Schema,
-      });
+  const schemas: any = await loadDir(opts.apiPath, {});
+  const flattedApiSchemas = flatObject('', schemas, {});
 
-      fastify.addSchema({
-        $id: `schema:${serviceKey}:${methodName}:response`,
-        ...TypeCompiler.Compile(schema.returns).Schema,
-      });
-    }
+  for (let key in flattedApiSchemas) {
+    const schema = TypeCompiler.Compile(flattedApiSchemas[key]).Schema();
+    fastify.addSchema({
+      $id: key,
+      ...schema,
+    });
   }
 });
