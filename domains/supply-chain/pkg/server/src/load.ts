@@ -1,6 +1,5 @@
-import { TypeCompiler } from '@sinclair/typebox/compiler';
-import fsp from 'node:fs/promises';
-import path from 'node:path';
+import * as fsp from 'node:fs/promises';
+import * as path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 export const load = async (filePath, sandbox, contextualize = false) => {

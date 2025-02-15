@@ -10,10 +10,11 @@ export default fp(async function shemaLoader(
   const flattedApiSchemas = flatObject('', schemas, {});
 
   for (let key in flattedApiSchemas) {
-    const schema = TypeCompiler.Compile(flattedApiSchemas[key]).Schema();
+    const validator = TypeCompiler.Compile(flattedApiSchemas[key]);
+    fastify.decorate(key, validator);
     fastify.addSchema({
       $id: key,
-      ...schema,
+      ...validator.Schema(),
     });
   }
 });

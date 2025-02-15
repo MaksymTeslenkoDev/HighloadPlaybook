@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "declaration": false,
+    "sourceMap": true
+  }
+}

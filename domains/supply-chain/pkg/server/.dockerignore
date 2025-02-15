@@ -1,0 +1,8 @@
+.env
+.env.sample
+Dockerfile
+Dockerfile.unoptimized
+test/*
+
+node_modules
+dist
