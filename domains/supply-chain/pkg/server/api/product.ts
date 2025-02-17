@@ -1,17 +1,17 @@
 import { Type, Static } from '@sinclair/typebox';
 
-export async function getProduct(
-  params: GetProductParamsType,
-): Promise<GetProductResponseType> {
-  console.log(await this.api.auth.login());
-  return {
-    productId: 1,
+const getProduct =
+  async (context: common.Context) =>
+  async (params: GetProductParamsType): Promise<GetProductResponseType> => {
+    console.log(await context.api.auth.login());
+    return {
+      productId: 1,
+    };
   };
-}
 
-export default function product(sandbox: any) {
+export default function product(sandbox: common.Context) {
   return {
-    get: getProduct.bind(sandbox),
+    get: getProduct(sandbox),
   };
 }
 

@@ -2,7 +2,11 @@ import * as fsp from 'node:fs/promises';
 import * as path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export const load = async (filePath, sandbox, contextualize = false) => {
+export const load = async (
+  filePath: string,
+  sandbox: any,
+  contextualize = false,
+) => {
   const moduleURL = pathToFileURL(filePath).href;
   const importedModule = await import(moduleURL);
 
@@ -13,14 +17,20 @@ export const load = async (filePath, sandbox, contextualize = false) => {
   return importedModule.default;
 };
 
-export const loadDir = async (dir, sandbox, contextualize = false) => {
+export const loadDir = async (
+  dir: string,
+  sandbox: any,
+  contextualize = false,
+) => {
   const files = await fsp.readdir(dir, { withFileTypes: true });
-  const container = {};
+  const container: Record<string, any> = {};
+  const filePattern = /\.(ts|js)$/;
+
   for (const file of files) {
     const { name } = file;
-    if (file.isFile() && !name.endsWith('.ts')) continue;
+    if (file.isFile() && !filePattern.test(file.name)) continue;
     const location = path.join(dir, name);
-    const key = path.basename(name, '.ts');
+    const key = path.basename(name, path.extname(name));
     const loader = file.isFile() ? load : loadDir;
     container[key] = await loader(location, sandbox, contextualize);
   }

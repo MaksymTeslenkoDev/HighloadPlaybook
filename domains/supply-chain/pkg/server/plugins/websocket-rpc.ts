@@ -1,21 +1,18 @@
 import fp from 'fastify-plugin';
 import websocket from '@fastify/websocket';
 
-interface RPCMessage {
-  jsonrpc: '2.0';
-  name: string;
-  method: string;
-  params?: any;
-  id?: string;
-}
-
-export default fp(async function ws(fastify, { routes }: { routes }) {
+export default fp(async function ws(
+  fastify,
+  { routes }: { routes: Record<string, any> },
+) {
   await fastify.register(websocket);
   await fastify.register(async (server) => {
     server.get('/api', { websocket: true }, (socket, req) => {
-      socket.on('message', async (message) => {
+      socket.on('message', async (message: string) => {
         try {
-          const { name, method, params, id } = JSON.parse(message.toString());
+          const { name, method, params, id } = JSON.parse(
+            message.toString(),
+          ) as common.RPCMessage;
           const handler = routes[name][method];
 
           if (!handler) {
@@ -24,7 +21,8 @@ export default fp(async function ws(fastify, { routes }: { routes }) {
             );
           }
 
-          const paramsValidation = fastify[`api:${name}:${method}:params`];
+          const paramsValidation =
+            fastify.typeValidators[`api:${name}:${method}:params`];
           if (paramsValidation) {
             if (!paramsValidation.Check(params)) {
               return socket.send(
@@ -43,7 +41,9 @@ export default fp(async function ws(fastify, { routes }: { routes }) {
           const result = await handler(params);
           socket.send(JSON.stringify(result), { binary: false });
         } catch (err) {
-          fastify.log.error(err.message);
+          if (err instanceof Error) {
+            fastify.log.error(err.message);
+          }
           socket.send('"Server error"', { binary: false });
         }
       });

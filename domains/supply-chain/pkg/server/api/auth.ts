@@ -1,12 +1,10 @@
+const login = async (context: common.Context) => async (): Promise<string> => {
+  console.log(await context.api.auth.login());
+  return 'login';
+};
 
-
-export async function login(
-): Promise<string> {
-  return "login";
-}
-
-export default function auth(sandbox: any) {
+export default function auth(sandbox: common.Context) {
   return {
-    login: login.bind(sandbox),
+    login: login(sandbox),
   };
 }

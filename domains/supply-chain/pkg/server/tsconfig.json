@@ -1,4 +1,5 @@
 {
+  "extends": ["@fastify/websocket"],
   "compilerOptions": {
     "outDir": "dist",
     "declaration": false,
