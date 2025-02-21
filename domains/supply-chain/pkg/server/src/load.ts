@@ -1,14 +1,12 @@
 import * as fsp from 'node:fs/promises';
 import * as path from 'node:path';
-import { pathToFileURL } from 'node:url';
 
 export const load = async (
   filePath: string,
   sandbox: any,
   contextualize = false,
 ) => {
-  const moduleURL = pathToFileURL(filePath).href;
-  const importedModule = await import(moduleURL);
+  const importedModule = await import(filePath);
 
   if (typeof importedModule.default === 'function') {
     return importedModule.default(sandbox);
@@ -57,4 +55,8 @@ export function flatObject(
     }
   }
   return result;
+}
+
+export function loadConfig(){
+
 }

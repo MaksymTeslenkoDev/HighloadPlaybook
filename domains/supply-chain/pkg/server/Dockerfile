@@ -21,8 +21,8 @@ ENV NODE_ENV=production
 
 WORKDIR $APP_HOME
 
-COPY --from=builder /build/package.json /build/package-lock.json ./
-COPY --from=builder /build/dist ./dist
+COPY --from=builder /build/package.json /build/package-lock.json /build/server.config.json ./
+COPY --from=builder /build/dist ./
 
 RUN npm ci --only=production --ignore-scripts
 
@@ -31,4 +31,5 @@ USER node
 EXPOSE 3000
 
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "dist/server.js"]
+
+CMD [ "node", "server.js"]

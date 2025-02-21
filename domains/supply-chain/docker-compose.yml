@@ -3,7 +3,7 @@ services:
     image: percona/percona-server:8.0.40-aarch64
     container_name: ps_mysql
     ports:
-      - "3307:3306"
+      - '3307:3306'
     env_file:
       - .env
     environment:
@@ -15,10 +15,18 @@ services:
       - supply_chain_data:/var/lib/mysql
       - ./cfg/my.cnf:/etc/my.cnf
     networks:
-      - ps_mysql_network
+      - supply_chain_network
+
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: './pkg/server'
+    networks:
+      - supply_chain_network
+
 volumes:
   supply_chain_data:
 
 networks:
-  ps_mysql_network:
+  supply_chain_network:
     driver: bridge
