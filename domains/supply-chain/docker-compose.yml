@@ -21,6 +21,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: './pkg/server'
+    volumes:
+      - ./pkg/server/server.config.json:/home/app/node/server.config.json:ro
     networks:
       - supply_chain_network
 

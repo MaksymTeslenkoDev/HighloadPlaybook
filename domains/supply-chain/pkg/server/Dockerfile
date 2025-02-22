@@ -18,10 +18,11 @@ RUN apk update && apk add --no-cache dumb-init && rm -rf /var/cache/apk/*
 ENV HOME=/home/app
 ENV APP_HOME=$HOME/node/
 ENV NODE_ENV=production
+ENV CONFIG_PATH=./server.config.json
 
 WORKDIR $APP_HOME
 
-COPY --from=builder /build/package.json /build/package-lock.json /build/server.config.json ./
+COPY --from=builder /build/package.json /build/package-lock.json ./
 COPY --from=builder /build/dist ./
 
 RUN npm ci --only=production --ignore-scripts
@@ -32,4 +33,4 @@ EXPOSE 3000
 
 ENTRYPOINT ["dumb-init"]
 
-CMD [ "node", "server.js"]
+CMD ["node", "server.js"]
