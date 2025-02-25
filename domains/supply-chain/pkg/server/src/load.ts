@@ -56,7 +56,3 @@ export function flatObject(
   }
   return result;
 }
-
-export function loadConfig(){
-
-}

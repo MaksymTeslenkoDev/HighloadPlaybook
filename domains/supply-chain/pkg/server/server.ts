@@ -14,8 +14,7 @@ import { loadDir } from './src/load.js';
       },
     },
   });
-  console.log('__dirname ', __dirname);
-  console.log('procces ', process.cwd());
+
   const sandbox = {
     db: () => 'db connection',
   };
@@ -30,8 +29,15 @@ import { loadDir } from './src/load.js';
   fastify.register(ApiSchemas, { apiPath: join(__dirname, 'schemas') });
   fastify.register(WS, { routes: api });
 
-  fastify.listen({ host: '0.0.0.0', port: 3000 }).catch((err) => {
-    fastify.log.error(err.message);
-    process.exit(1);
-  });
+  fastify.log.info(`PORT ${process.env.PORT}`)
+
+  fastify
+    .listen({
+      host: '0.0.0.0',
+      port: process.env.PORT ? Number(process.env.PORT) : 8081,
+    })
+    .catch((err) => {
+      fastify.log.error(err.message);
+      process.exit(1);
+    });
 })();

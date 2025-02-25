@@ -1,7 +1,35 @@
 services:
+  loki:
+    container_name: SCM_loki
+    image: grafana/loki:2.9.0
+    ports:
+      - "3100:3100"
+    networks:
+      - supply_chain_network
+      
+  fluentd-loki:
+    container_name: SCM_fluentd-loki
+    build: 
+      context: ./src/fluentd
+      dockerfile: Dockerfile
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    volumes:
+      - ./src/fluentd/fluentd.conf:/fluentd/etc/fluent.conf
+    networks:
+      - supply_chain_network
+    depends_on:
+      - loki
+    healthcheck:
+      test: ["CMD", "sh", "-c", "pgrep -x fluentd"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
+
   percona:
+    container_name: SCM_ps-mysql
     image: percona/percona-server:8.0.40-aarch64
-    container_name: ps_mysql
     ports:
       - '3307:3306'
     env_file:
@@ -9,15 +37,32 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: bob
-      MYSQL_PASSWORD: secretbob
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_USER_PASS}
     volumes:
       - supply_chain_data:/var/lib/mysql
       - ./cfg/my.cnf:/etc/my.cnf
     networks:
       - supply_chain_network
+  
+  grafana:
+    container_name: SCM_grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+      - GF_DASHBOARD_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/dashboards/default-dashboard.json
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+    volumes:
+      - ./src/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - supply_chain_network
+    depends_on:
+      - loki
 
-  app:
+  server:
+    container_name: SCM_server
     build:
       dockerfile: Dockerfile
       context: './pkg/server'
@@ -25,7 +70,15 @@ services:
       - ./pkg/server/server.config.json:/home/app/node/server.config.json:ro
     networks:
       - supply_chain_network
-
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: node-app.logs
+    depends_on:
+      fluentd-loki:
+        condition: service_healthy
+  
 volumes:
   supply_chain_data:
 

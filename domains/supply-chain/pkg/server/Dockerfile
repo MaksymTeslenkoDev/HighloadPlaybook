@@ -19,6 +19,7 @@ ENV HOME=/home/app
 ENV APP_HOME=$HOME/node/
 ENV NODE_ENV=production
 ENV CONFIG_PATH=./server.config.json
+ENV PORT=8081
 
 WORKDIR $APP_HOME
 
@@ -29,7 +30,7 @@ RUN npm ci --only=production --ignore-scripts
 
 USER node
 
-EXPOSE 3000
+EXPOSE ${PORT}
 
 ENTRYPOINT ["dumb-init"]
 
