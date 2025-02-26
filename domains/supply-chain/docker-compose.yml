@@ -67,7 +67,7 @@ services:
       dockerfile: Dockerfile
       context: './pkg/server'
     volumes:
-      - ./pkg/server/server.config.json:/home/app/node/server.config.json:ro
+      - server_config:/home/app/node/config
     networks:
       - supply_chain_network
     logging:
@@ -81,6 +81,8 @@ services:
   
 volumes:
   supply_chain_data:
+  server_config:
+    external: true
 
 networks:
   supply_chain_network:

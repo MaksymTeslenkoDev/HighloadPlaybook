@@ -8,9 +8,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:init-tables": "set -a && source .env && cat db/structure.sql | docker exec -i ps_mysql mysql -u root -p$DB_ROOT_PASSWORD --database=$DB_NAME",
     "db:seed": "set -a && source .env && cat db/seed.sql | docker exec -i ps_mysql mysql -u root -p$DB_ROOT_PASSWORD --database=$DB_NAME",
-    "generate:schemas": "tsx scripts/generate-json-schemas",
+    "generate:schemas": "tsx generate-json-schemas",
     "lint": "eslint src/server",
-    "lint:fix": "eslint --fix src"
+    "lint:fix": "eslint --fix src",
+    "config:copy": "docker cp \"$CONFIG_PATH\" \"$SERVICE:/home/app/node/config/server.config.json\"",
+    "container:restart": "docker container restart \"$SERVICE\"",
+    "config:update": "npm run config:copy -- \"$1\" \"$2\" && npm run container:restart -- \"$1\""
   },
   "keywords": [],
   "author": "",

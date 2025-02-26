@@ -18,7 +18,8 @@ RUN apk update && apk add --no-cache dumb-init && rm -rf /var/cache/apk/*
 ENV HOME=/home/app
 ENV APP_HOME=$HOME/node/
 ENV NODE_ENV=production
-ENV CONFIG_PATH=./server.config.json
+ENV CONFIG_PATH=/config/server.config.json
+
 ENV PORT=8081
 
 WORKDIR $APP_HOME

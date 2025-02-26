@@ -29,7 +29,7 @@ import { loadDir } from './src/load.js';
   fastify.register(ApiSchemas, { apiPath: join(__dirname, 'schemas') });
   fastify.register(WS, { routes: api });
 
-  fastify.log.info(`PORT ${process.env.PORT}`)
+  fastify.log.info(`PORT ${process.env.PORT}`);
 
   fastify
     .listen({
