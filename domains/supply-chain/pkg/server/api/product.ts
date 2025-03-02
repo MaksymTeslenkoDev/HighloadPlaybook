@@ -1,7 +1,7 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Type, type Static } from '@sinclair/typebox';
 
 const getProduct =
-  async (context: common.Context) =>
+  (context: common.Context) =>
   async (params: GetProductParamsType): Promise<GetProductResponseType> => {
     console.log(await context.api.auth.login());
     return {

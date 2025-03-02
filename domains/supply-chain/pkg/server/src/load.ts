@@ -6,7 +6,7 @@ export const load = async (
   sandbox: any,
   contextualize = false,
 ) => {
-  const importedModule = await import(filePath);
+  const importedModule = require(filePath);
 
   if (typeof importedModule.default === 'function') {
     return importedModule.default(sandbox);

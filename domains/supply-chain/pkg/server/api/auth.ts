@@ -1,5 +1,4 @@
-const login = async (context: common.Context) => async (): Promise<string> => {
-  console.log(await context.api.auth.login());
+const login = (context: common.Context) => async (): Promise<string> => {
   return 'login';
 };
 

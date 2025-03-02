@@ -3,7 +3,7 @@ import Fastify from 'fastify';
 import Config from './plugins/config';
 import ApiSchemas from './plugins/api-schemas-loader';
 import WS from './plugins/websocket-rpc';
-import { loadDir } from './src/load.js';
+import { loadDir } from './src/load';
 
 (async () => {
   const fastify = Fastify({
@@ -20,16 +20,18 @@ import { loadDir } from './src/load.js';
   };
 
   fastify.register(Config, { appPath: process.cwd() });
-
-  const api = await loadDir(join(__dirname, 'api'), sandbox);
+  const api = await loadDir(join(process.cwd(), 'api'), sandbox);
 
   Object.assign(sandbox, { api });
   fastify.decorate('api', api);
 
-  fastify.register(ApiSchemas, { apiPath: join(__dirname, 'schemas') });
+  fastify.register(ApiSchemas, { apiPath: join(process.cwd(), 'schemas') });
   fastify.register(WS, { routes: api });
 
   fastify.log.info(`PORT ${process.env.PORT}`);
+  fastify.get('/get', {}, () => {
+    return 'heelo';
+  });
 
   fastify
     .listen({

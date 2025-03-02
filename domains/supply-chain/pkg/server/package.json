@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "rimraf dist && tsc",
-    "start": "fastify start --options server.ts",
+    "typecheck": "tsc --noEmit",
     "dev": "tsx watch server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   }

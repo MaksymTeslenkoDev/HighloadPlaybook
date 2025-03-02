@@ -25,7 +25,7 @@ chmod +x ./scripts/config.create.sh
 ### **Example Usage:**
 ```sh
 chmod +x ./scripts/config.update.sh
-./scripts/config.create.sh config_volume ./pkg/server/server.config.json
+./scripts/config.create.sh server_config ./pkg/server/server.config.json
 ```
 
 ✅ This script will:
