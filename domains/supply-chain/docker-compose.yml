@@ -3,18 +3,18 @@ services:
     container_name: SCM_loki
     image: grafana/loki:2.9.0
     ports:
-      - "3100:3100"
+      - '3100:3100'
     networks:
       - supply_chain_network
-      
+
   fluentd-loki:
     container_name: SCM_fluentd-loki
-    build: 
+    build:
       context: ./src/fluentd
       dockerfile: Dockerfile
     ports:
-      - "24224:24224"
-      - "24224:24224/udp"
+      - '24224:24224'
+      - '24224:24224/udp'
     volumes:
       - ./src/fluentd/fluentd.conf:/fluentd/etc/fluent.conf
     networks:
@@ -22,7 +22,7 @@ services:
     depends_on:
       - loki
     healthcheck:
-      test: ["CMD", "sh", "-c", "pgrep -x fluentd"]
+      test: ['CMD', 'sh', '-c', 'pgrep -x fluentd']
       interval: 5s
       retries: 5
       start_period: 10s
@@ -44,12 +44,12 @@ services:
       - ./cfg/my.cnf:/etc/my.cnf
     networks:
       - supply_chain_network
-  
+
   grafana:
     container_name: SCM_grafana
     image: grafana/grafana:latest
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
       - GF_DASHBOARD_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/dashboards/default-dashboard.json
@@ -75,10 +75,12 @@ services:
       options:
         fluentd-address: localhost:24224
         tag: node-app.logs
+    ports:
+      - '8081:8081'
     depends_on:
       fluentd-loki:
         condition: service_healthy
-  
+
 volumes:
   supply_chain_data:
   server_config:

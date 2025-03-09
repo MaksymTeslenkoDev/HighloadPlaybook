@@ -20,5 +20,5 @@ export default fp(
     }
     fastify.decorate('typeValidators', typeValidators);
   },
-  { name: 'api-schemas', dependencies: ['config-loader'] },
+  { name: 'api-schemas'},
 );
