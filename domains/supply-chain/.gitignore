@@ -4,3 +4,5 @@ schemas/json
 pkg/server/dist
 
 server.config.json
+
+*.log

@@ -18,7 +18,21 @@ import crypto from 'node:crypto';
       );
     },
     logger: {
-      level: config.logLevel || 'info',
+      level: config.logger.logLevel || 'info',
+      transport: {
+        targets: [
+          {
+            target: 'pino/file',
+            options: {
+              destination: join(process.cwd(), config.logger.dir, 'app.log'),
+            },
+          },
+          {
+            target: 'pino/file',
+            options: { destination: 1 },
+          },
+        ],
+      },
       timestamp: () => {
         const dateString = new Date(Date.now()).toISOString();
         return `,"@timestamp":"${dateString}"`;
@@ -41,7 +55,11 @@ import crypto from 'node:crypto';
             routeUrl: request.routeOptions.url,
             version: request.headers?.['accept-version'],
             user: request.user?.id,
-            headers: request.headers,
+            headers: {
+              host: request.headers['host'],
+              connection: request.headers['connection'],
+              test: request.headers[':path'],
+            },
             body: shouldLogBody ? request.body : undefined,
             hostname: request.hostname,
             remoteAddress: request.ip,
@@ -87,6 +105,14 @@ import crypto from 'node:crypto';
     const data = { name, ip, uid, namespace, req_ip: req.ip, req_id: req.id };
     fastify.log.info(data);
     return data;
+  });
+
+  fastify.post('/error', {}, (req) => {
+    throw new Error('test error');
+  });
+
+  fastify.post('/body/:param', { config: { logBody: true } }, (req) => {
+    return 'success';
   });
 
   fastify.addHook('onRequest', async function onRequestLogHook(req) {

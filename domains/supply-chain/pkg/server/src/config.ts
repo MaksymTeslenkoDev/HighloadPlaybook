@@ -28,11 +28,14 @@ export const ConfigSchema = Type.Object({
     development: 'DEVELOPMENT',
     production: 'PRODUCTION',
   }),
-  logLevel: Type.Enum({
-    info: 'info',
-    debug: 'debug',
-    error: 'error',
-  }),
+  logger:Type.Object({
+    dir:Type.String(),
+    logLevel: Type.Enum({
+      info: 'info',
+      debug: 'debug',
+      error: 'error',
+    }),
+  })
 });
 
 export type ConfigType = Static<typeof ConfigSchema>;
