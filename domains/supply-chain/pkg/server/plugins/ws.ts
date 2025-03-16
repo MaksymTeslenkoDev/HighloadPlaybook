@@ -12,7 +12,7 @@ export default fp(async function ws(
         try {
           const { name, method, params, id } = JSON.parse(
             message.toString(),
-          ) as common.RPCMessage;
+          ) as app.RPCMessage;
           const handler = routes[name][method];
 
           if (!handler) {

@@ -1,15 +1,16 @@
 import { Type, type Static } from '@sinclair/typebox';
 
 const getProduct =
-  (context: common.Context) =>
+  (context: app.Sandbox) =>
   async (params: GetProductParamsType): Promise<GetProductResponseType> => {
     console.log(await context.api.auth.login());
+    console.log(context.common.hashPassword("password"));
     return {
       productId: 1,
     };
   };
 
-export default function product(sandbox: common.Context) {
+export default function product(sandbox: app.Sandbox) {
   return {
     get: getProduct(sandbox),
   };

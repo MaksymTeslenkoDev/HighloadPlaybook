@@ -1,14 +1,10 @@
 import { TypeCheck, TypeCompiler } from '@sinclair/typebox/compiler';
 import fp from 'fastify-plugin';
-import { flatObject, loadDir } from '../src/load';
+import { flatObject } from '../src/load';
 
 export default fp(
-  async function shemaLoader(fastify, opts: { apiPath: string }) {
-    const schemas: any = await loadDir(opts.apiPath, {
-      config: fastify.config,
-    });
-    const flattedApiSchemas = flatObject('', schemas, {});
-
+  async function shemaLoader(fastify, opts: { schemas: any }) {
+    const flattedApiSchemas = flatObject('', opts.schemas, {});
     const typeValidators: Record<string, TypeCheck<any>> = {};
     for (let key in flattedApiSchemas) {
       const validator = TypeCompiler.Compile(flattedApiSchemas[key]);
@@ -20,5 +16,5 @@ export default fp(
     }
     fastify.decorate('typeValidators', typeValidators);
   },
-  { name: 'api-schemas'},
+  { name: 'api-schemas' },
 );

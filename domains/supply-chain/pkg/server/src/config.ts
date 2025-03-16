@@ -27,15 +27,17 @@ export const ConfigSchema = Type.Object({
   environment: Type.Enum({
     development: 'DEVELOPMENT',
     production: 'PRODUCTION',
+    test: 'TEST',
   }),
-  logger:Type.Object({
-    dir:Type.String(),
+  logger: Type.Object({
+    dir: Type.String(),
     logLevel: Type.Enum({
       info: 'info',
       debug: 'debug',
       error: 'error',
     }),
-  })
+  }),
+  db: Type.Object({}),
 });
 
 export type ConfigType = Static<typeof ConfigSchema>;

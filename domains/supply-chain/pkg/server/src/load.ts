@@ -1,5 +1,8 @@
 import * as fsp from 'node:fs/promises';
 import * as path from 'node:path';
+import { configLoader } from './config';
+import common from '../lib/common';
+import dbBuilder from '../lib/db';
 
 export const load = async (
   filePath: string,
@@ -55,4 +58,29 @@ export function flatObject(
     }
   }
   return result;
+}
+
+export async function loadApplication(appPath: string) {
+  const sandbox: Partial<app.Sandbox> = {
+    common,
+    api: {},
+  };
+
+  const apiPath = path.join(appPath, './api');
+  const api = await loadDir(apiPath, sandbox);
+
+  const apiSchemasPath = path.join(appPath, './schemas');
+  const apiSchemas = await loadDir(apiSchemasPath, sandbox);
+
+  const config = configLoader({ appPath });
+
+  const db = dbBuilder(config.db);
+  Object.assign(sandbox, {
+    api: Object.freeze(api),
+    config: Object.freeze(config),
+    db: Object.freeze(db),
+    schemas: Object.freeze(apiSchemas),
+  });
+
+  return sandbox as app.Sandbox;
 }

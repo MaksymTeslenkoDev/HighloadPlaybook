@@ -1,13 +1,13 @@
 import { join } from 'node:path';
 import Fastify from 'fastify';
-import ApiSchemas from './plugins/api-schemas-loader';
-import WS from './plugins/websocket-rpc';
-import { loadDir } from './src/load';
-import { configLoader } from './src/config';
+import Schemas from './plugins/api-schemas-loader';
+import WS from './plugins/ws';
+import { loadApplication } from './src/load';
 import crypto from 'node:crypto';
 
 (async () => {
-  const config = configLoader({ appPath: process.cwd() });
+  const app = await loadApplication(process.cwd());
+
   const fastify = Fastify({
     disableRequestLogging: true,
     requestIdLogLabel: 'reqId', // default
@@ -18,13 +18,17 @@ import crypto from 'node:crypto';
       );
     },
     logger: {
-      level: config.logger.logLevel || 'info',
+      level: app.config.logger.logLevel || 'info',
       transport: {
         targets: [
           {
             target: 'pino/file',
             options: {
-              destination: join(process.cwd(), config.logger.dir, 'app.log'),
+              destination: join(
+                process.cwd(),
+                app.config.logger.dir,
+                'app.log',
+              ),
             },
           },
           {
@@ -81,19 +85,8 @@ import crypto from 'node:crypto';
     },
   });
 
-  fastify.decorate('config', config);
-
-  const sandbox = {
-    db: () => 'db connection',
-  };
-
-  const api = await loadDir(join(process.cwd(), 'api'), sandbox);
-
-  Object.assign(sandbox, { api });
-  fastify.decorate('api', api);
-
-  fastify.register(ApiSchemas, { apiPath: join(process.cwd(), 'schemas') });
-  fastify.register(WS, { routes: api });
+  fastify.register(Schemas, { schemas: app.schemas });
+  fastify.register(WS, { routes: app.api });
 
   fastify.log.info(`PORT ${process.env.PORT}`);
 
