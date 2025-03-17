@@ -15,12 +15,10 @@ declare global {
       };
     };
 
-    type RPCMessage = {
-      jsonrpc: '2.0';
+    type WsRPCMessage = {
       name: string;
       method: string;
-      params?: any;
-      id?: string;
+      params: any;
     };
   }
 }

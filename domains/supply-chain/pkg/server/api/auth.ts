@@ -1,8 +1,8 @@
-const login = (context: common.Context) => async (): Promise<string> => {
+const login = (context: app.Sandbox) => async (): Promise<string> => {
   return 'login';
 };
 
-export default function auth(sandbox: common.Context) {
+export default function auth(sandbox: app.Sandbox) {
   return {
     login: login(sandbox),
   };

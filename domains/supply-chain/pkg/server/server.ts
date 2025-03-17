@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import Fastify from 'fastify';
 import Schemas from './plugins/api-schemas-loader';
 import WS from './plugins/ws';
+import http from './plugins/http';
 import { loadApplication } from './src/load';
 import crypto from 'node:crypto';
 
@@ -86,27 +87,8 @@ import crypto from 'node:crypto';
   });
 
   fastify.register(Schemas, { schemas: app.schemas });
+  fastify.register(http, { routes: app.api });
   fastify.register(WS, { routes: app.api });
-
-  fastify.log.info(`PORT ${process.env.PORT}`);
-
-  fastify.get('/hello', {}, (req) => {
-    const name = process.env.POD_NAME;
-    const ip = process.env.POD_IP;
-    const uid = process.env.POD_UID;
-    const namespace = process.env.POD_NAMESPACE;
-    const data = { name, ip, uid, namespace, req_ip: req.ip, req_id: req.id };
-    fastify.log.info(data);
-    return data;
-  });
-
-  fastify.post('/error', {}, (req) => {
-    throw new Error('test error');
-  });
-
-  fastify.post('/body/:param', { config: { logBody: true } }, (req) => {
-    return 'success';
-  });
 
   fastify.addHook('onRequest', async function onRequestLogHook(req) {
     req.log.info({ req }, 'incoming request 🔮');
@@ -120,6 +102,12 @@ import crypto from 'node:crypto';
     .listen({
       host: '0.0.0.0',
       port: process.env.PORT ? Number(process.env.PORT) : 8081,
+    })
+    .then(() => {
+      console.log(fastify.printPlugins());
+      console.log(
+        fastify.printRoutes({ commonPrefix: false, includeHooks: true }),
+      );
     })
     .catch((err) => {
       fastify.log.error(err.message);
