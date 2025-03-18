@@ -7,13 +7,16 @@ export default fp(
     const flattedApiSchemas = flatObject('', opts.schemas, {});
     const typeValidators: Record<string, TypeCheck<any>> = {};
     for (let key in flattedApiSchemas) {
-      const validator = TypeCompiler.Compile(flattedApiSchemas[key]);
-      typeValidators[key] = validator;
-      fastify.addSchema({
-        $id: key,
-        ...validator.Schema(),
-      });
+      if (flattedApiSchemas[key]) {
+        const validator = TypeCompiler.Compile(flattedApiSchemas[key]);
+        typeValidators[key] = validator;
+        fastify.addSchema({
+          $id: key,
+          ...validator.Schema(),
+        });
+      }
     }
+    fastify.decorate('types', flattedApiSchemas);
     fastify.decorate('typeValidators', typeValidators);
   },
   { name: 'api-schemas' },
