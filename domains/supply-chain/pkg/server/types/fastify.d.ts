@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { Static, TObject} from '@sinclair/typebox';
+import { TObject } from '@sinclair/typebox';
 import { TypeCheck } from '@sinclair/typebox/compiler';
-import { ConfigType } from '../src/config';
 
 export declare module 'fastify' {
   interface FastifyInstance {

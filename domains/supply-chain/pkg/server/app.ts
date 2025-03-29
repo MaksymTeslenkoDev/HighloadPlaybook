@@ -1,15 +1,16 @@
+import { FastifyPluginAsync, FastifyServerOptions } from 'fastify';
+import { loadApplication } from './src/load';
 import { join } from 'node:path';
-import Fastify from 'fastify';
+import { configLoader } from './src/config';
 import Schemas from './plugins/api-schemas-loader';
 import WS from './plugins/ws';
 import http from './plugins/http';
-import { loadApplication } from './src/load';
-import crypto from 'node:crypto';
 
-(async () => {
-  const app = await loadApplication(process.cwd());
-
-  const fastify = Fastify({
+export interface AppOptions extends FastifyServerOptions {}
+// Pass --options via CLI arguments in command to enable these options.
+const options = (): AppOptions => {
+  const config = configLoader({ appPath: process.cwd() });
+  return {
     disableRequestLogging: true,
     requestIdLogLabel: 'reqId', // default
     requestIdHeader: 'x-request-id',
@@ -19,17 +20,13 @@ import crypto from 'node:crypto';
       );
     },
     logger: {
-      level: app.config.logger.logLevel || 'info',
+      level: config.logger.logLevel || 'info',
       transport: {
         targets: [
           {
             target: 'pino/file',
             options: {
-              destination: join(
-                process.cwd(),
-                app.config.logger.dir,
-                'app.log',
-              ),
+              destination: join(process.cwd(), config.logger.dir, 'app.log'),
             },
           },
           {
@@ -84,7 +81,14 @@ import crypto from 'node:crypto';
         removeAdditional: 'all',
       },
     },
-  });
+  };
+};
+
+const app: FastifyPluginAsync<AppOptions> = async (
+  fastify,
+  opts,
+): Promise<void> => {
+  const app = await loadApplication(process.cwd());
 
   fastify.register(Schemas, { schemas: app.schemas });
   fastify.register(http, { routes: app.api });
@@ -98,19 +102,9 @@ import crypto from 'node:crypto';
     req.log.info({ req, res }, 'request completed 🎉');
   });
 
-  fastify
-    .listen({
-      host: '0.0.0.0',
-      port: process.env.PORT ? Number(process.env.PORT) : 8081,
-    })
-    .then(() => {
-      console.log(fastify.printPlugins());
-      console.log(
-        fastify.printRoutes({ commonPrefix: false, includeHooks: true }),
-      );
-    })
-    .catch((err) => {
-      fastify.log.error(err.message);
-      process.exit(1);
-    });
-})();
+  console.log(fastify.printPlugins());
+  console.log(fastify.printRoutes({ commonPrefix: false, includeHooks: true }));
+};
+
+export default app;
+export { app, options };

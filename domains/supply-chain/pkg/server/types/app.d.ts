@@ -1,6 +1,6 @@
 import fastify from 'fastify';
 import common from '../lib/common';
-import { ConfigType } from '../src/config';
+import { ConfigType } from '../../server/src/config';
 /// <reference path="../lib/db.d.ts" />
 
 declare global {

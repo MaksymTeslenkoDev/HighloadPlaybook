@@ -5,9 +5,9 @@ WORKDIR /build
 
 COPY . .
 
-RUN npm ci --ignore-scripts
+RUN npm ci
 
-RUN npm run build
+RUN npm run build:ts
 
 RUN rm -rf node_modules
 
@@ -27,7 +27,7 @@ WORKDIR $APP_HOME
 COPY --from=builder /build/package.json /build/package-lock.json ./
 COPY --from=builder /build/dist ./
 
-RUN npm ci --only=production --ignore-scripts
+RUN npm ci --only=production
 
 USER node
 
@@ -35,4 +35,4 @@ EXPOSE ${PORT}
 
 ENTRYPOINT ["dumb-init"]
 
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start:docker"]
