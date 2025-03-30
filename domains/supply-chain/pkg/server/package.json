@@ -7,31 +7,32 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run build:ts && tsc -p test/tsconfig.json && c8 node --test -r ts-node/register \"test/**/*.ts\"",
-    "start": "npm run build:ts && fastify start -l info dist/app.js",
-    "start:docker": "fastify start -l info app.js",
+    "test": "c8 tsx --test \"test/**/*.ts\"",
+    "start": "npm run build:ts && fastify start -l info dist/app.js --options",
+    "start:docker": "fastify start -l info app.js --options",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
     "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
-    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js"
+    "dev:start": "fastify start --ignore-watch=.ts$ -w dist/app.js --options"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fastify": "^5.0.0",
-    "fastify-plugin": "^5.0.0",
     "@fastify/sensible": "^6.0.0",
-    "fastify-cli": "^7.4.0",
     "@fastify/websocket": "^11.0.1",
-    "@sinclair/typebox": "^0.34.14"
+    "@sinclair/typebox": "^0.34.14",
+    "fastify": "^5.0.0",
+    "fastify-cli": "^7.4.0",
+    "fastify-plugin": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",
     "c8": "^10.1.2",
-    "ts-node": "^10.4.0",
     "concurrently": "^9.0.0",
     "fastify-tsconfig": "^3.0.0",
+    "ts-node": "^10.4.0",
+    "tsx": "^4.19.3",
     "typescript": "~5.8.2"
   }
 }

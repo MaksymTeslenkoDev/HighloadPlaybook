@@ -1,5 +1,5 @@
 {
-  "extends": ["fastify-tsconfig"],
+  "extends": ["fastify-tsconfig", "@fastify/websocket"],
   "compilerOptions": {
     "outDir": "dist",
     "sourceMap": true
