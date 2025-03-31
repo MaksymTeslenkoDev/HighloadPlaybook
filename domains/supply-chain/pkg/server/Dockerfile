@@ -5,9 +5,9 @@ WORKDIR /build
 
 COPY . .
 
-RUN npm ci --ignore-scripts
+RUN npm ci
 
-RUN npm run build
+RUN npm run build:ts
 
 RUN rm -rf node_modules
 
@@ -18,7 +18,7 @@ RUN apk update && apk add --no-cache dumb-init && rm -rf /var/cache/apk/*
 ENV HOME=/home/app
 ENV APP_HOME=$HOME/node/
 ENV NODE_ENV=production
-ENV CONFIG_PATH=/config/server.config.json
+ENV CONFIG_PATH=/config/app.config.json
 
 ENV PORT=8081
 
@@ -27,7 +27,7 @@ WORKDIR $APP_HOME
 COPY --from=builder /build/package.json /build/package-lock.json ./
 COPY --from=builder /build/dist ./
 
-RUN npm ci --only=production --ignore-scripts
+RUN npm ci --only=production
 
 USER node
 
@@ -35,4 +35,4 @@ EXPOSE ${PORT}
 
 ENTRYPOINT ["dumb-init"]
 
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start:docker"]

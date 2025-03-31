@@ -1,17 +1,12 @@
+import { FastifyServerOptions } from 'fastify';
+import { AppConfig } from './src/config';
 import { join } from 'node:path';
-import Fastify from 'fastify';
-import Schemas from './plugins/api-schemas-loader';
-import WS from './plugins/ws';
-import http from './plugins/http';
-import { loadApplication } from './src/load';
-import crypto from 'node:crypto';
 
-(async () => {
-  const app = await loadApplication(process.cwd());
-
-  const fastify = Fastify({
+export interface AppOptions extends FastifyServerOptions {}
+const config = ({ logger }: AppConfig): AppOptions => {
+  return {
     disableRequestLogging: true,
-    requestIdLogLabel: 'reqId', // default
+    requestIdLogLabel: 'reqId',
     requestIdHeader: 'x-request-id',
     genReqId: function (req) {
       return (
@@ -19,21 +14,17 @@ import crypto from 'node:crypto';
       );
     },
     logger: {
-      level: app.config.logger.logLevel || 'info',
+      level: logger.logLevel || 'info',
       transport: {
         targets: [
           {
             target: 'pino/file',
             options: {
-              destination: join(
-                process.cwd(),
-                app.config.logger.dir,
-                'app.log',
-              ),
+              destination: join(process.cwd(), logger.dir, 'app.log'),
             },
           },
           {
-            target: 'pino/file',
+            target: logger.pretty ? 'pino-pretty' : 'pino/file',
             options: { destination: 1 },
           },
         ],
@@ -53,7 +44,7 @@ import crypto from 'node:crypto';
       serializers: {
         //@ts-ignore
         req: function (request) {
-          const shouldLogBody = request.routeOptions.config.logBody === true;
+          const shouldLogBody = request.routeOptions.config?.logBody === true;
           return {
             method: request.method,
             url: request.raw.url,
@@ -84,33 +75,6 @@ import crypto from 'node:crypto';
         removeAdditional: 'all',
       },
     },
-  });
-
-  fastify.register(Schemas, { schemas: app.schemas });
-  fastify.register(http, { routes: app.api });
-  fastify.register(WS, { routes: app.api });
-
-  fastify.addHook('onRequest', async function onRequestLogHook(req) {
-    req.log.info({ req }, 'incoming request 🔮');
-  });
-
-  fastify.addHook('onSend', async function onSendRequestLogHook(req, res) {
-    req.log.info({ req, res }, 'request completed 🎉');
-  });
-
-  fastify
-    .listen({
-      host: '0.0.0.0',
-      port: process.env.PORT ? Number(process.env.PORT) : 8081,
-    })
-    .then(() => {
-      console.log(fastify.printPlugins());
-      console.log(
-        fastify.printRoutes({ commonPrefix: false, includeHooks: true }),
-      );
-    })
-    .catch((err) => {
-      fastify.log.error(err.message);
-      process.exit(1);
-    });
-})();
+  };
+};
+export default (app: AppConfig) => config(app);

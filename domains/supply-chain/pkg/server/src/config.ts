@@ -3,10 +3,10 @@ import { Type, Static } from '@sinclair/typebox';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-export function configLoader(path: { appPath: string }): ConfigType {
+export function configLoader(path: { appPath: string }): AppConfig {
   const configPath = join(
     path.appPath,
-    process.env.CONFIG_PATH || 'server.config.json',
+    process.env.CONFIG_PATH || 'app.config.json',
   );
   if (!existsSync(configPath)) {
     throw new Error(`Config file not found at: ${configPath}`);
@@ -36,8 +36,9 @@ export const ConfigSchema = Type.Object({
       debug: 'debug',
       error: 'error',
     }),
+    pretty: Type.Optional(Type.Boolean()),
   }),
   db: Type.Object({}),
 });
 
-export type ConfigType = Static<typeof ConfigSchema>;
+export type AppConfig = Static<typeof ConfigSchema>;

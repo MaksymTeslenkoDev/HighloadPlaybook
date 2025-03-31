@@ -10,7 +10,6 @@ export const load = async (
   contextualize = false,
 ) => {
   const importedModule = require(filePath);
-
   if (typeof importedModule.default === 'function') {
     return importedModule.default(sandbox);
   }
@@ -65,7 +64,6 @@ export async function loadApplication(appPath: string) {
     common,
     api: {},
   };
-
   const apiPath = path.join(appPath, './api');
   const api = await loadDir(apiPath, sandbox);
 

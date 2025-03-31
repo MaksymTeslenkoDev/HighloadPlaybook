@@ -25,12 +25,12 @@ chmod +x ./scripts/config.create.sh
 ### **Example Usage:**
 ```sh
 chmod +x ./scripts/config.update.sh
-./scripts/config.create.sh server_config ./pkg/server/server.config.json
+./scripts/config.create.sh server_config ./pkg/server/app.config.json
 ```
 
 ✅ This script will:
 1. **Create a Docker volume** named `<VOLUME_NAME>`.
-2. **Copy the provided `server.config.json` file** into the volume.
+2. **Copy the provided `app.config.json` file** into the volume.
 3. **Ensure the file persists** inside the volume for the application to use.
 
 ---
@@ -61,15 +61,15 @@ docker exec -it $(docker-compose ps -q app) ls -la /config/
 To check the contents of the config file inside the container:
 
 ```sh
-docker exec -it $(docker-compose ps -q app) cat /config/server.config.json
+docker exec -it $(docker-compose ps -q app) cat /config/app.config.json
 ```
 
-✅ If everything is set up correctly, you should see the `server.config.json` file inside `/config/` in the container.
+✅ If everything is set up correctly, you should see the `app.config.json` file inside `/config/` in the container.
 
 ---
 
 ## **📌 Step 4: Updating the Config File**
-If you need to update the `server.config.json` file inside the volume, run:
+If you need to update the `app.config.json` file inside the volume, run:
 
 ```sh
 ./scripts/config.update.sh <VOLUME_NAME> <PATH_TO_NEW_CONFIG_FILE>
@@ -95,7 +95,7 @@ docker-compose down
 To remove the manually created volume (⚠️ This will delete the stored config file!):
 
 ```sh
-docker volume rm config_volume
+docker volume rm server_config
 ```
 
 ---
@@ -103,7 +103,7 @@ docker volume rm config_volume
 ## **🎯 Summary of Workflow**
 1. **Create a Docker volume and copy the config file**:  
    ```sh
-   ./scripts/config.create.sh config_volume ./pkg/server/server.config.json
+   ./scripts/config.create.sh server_config ./pkg/server/app.config.json
    ```
 2. **Run the application using Docker Compose**:  
    ```sh
@@ -115,7 +115,7 @@ docker volume rm config_volume
    ```
 4. **Update the config file (if needed)**:  
    ```sh
-   ./scripts/config.update.sh config_volume ./pkg/server/server.config.json
+   ./scripts/config.update.sh server_config ./pkg/server/app.config.json
    ```
 5. **Restart the container to apply the new config**:  
    ```sh
@@ -126,5 +126,5 @@ docker volume rm config_volume
    docker-compose down
    ```
 
-🚀 **Your application is now set up and running with a managed Docker volume for configuration!** Let me know if you need any refinements. 🔥😊
+🚀 **Your application is now set up and running with a managed Docker volume for configuration!**
 
