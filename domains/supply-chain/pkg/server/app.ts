@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 import { loadApplication } from './src/load';
-import { configLoader } from './src/config';
+import { AppConfig, configLoader } from './src/config';
 import Schemas from './plugins/api-schemas-loader';
 import WS from './plugins/ws';
 import http from './plugins/http';
@@ -9,11 +9,13 @@ import serverOptions, { AppOptions } from './server.config';
 const appConfig = configLoader({ appPath: process.cwd() });
 const options = serverOptions(appConfig);
 
-const app: FastifyPluginAsync<AppOptions> = async (
-  fastify,
-  opts,
-): Promise<void> => {
+const app: FastifyPluginAsync<
+  AppOptions & { testAppConfig?: AppConfig }
+> = async (fastify, opts): Promise<void> => {
   const app = await loadApplication(process.cwd());
+  if (opts.testAppConfig) {
+    app.config = opts.testAppConfig;
+  }
 
   fastify.register(Schemas, { schemas: app.schemas });
   fastify.register(http, { routes: app.api });
@@ -31,7 +33,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
     return 'OK';
   });
 
-  console.log(fastify.printPlugins());
   console.log(fastify.printRoutes({ commonPrefix: false, includeHooks: true }));
 };
 

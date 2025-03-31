@@ -1,6 +1,6 @@
 import fastify from 'fastify';
 import common from '../lib/common';
-import { ConfigType } from '../../server/src/config';
+import { AppConfig } from '../../server/src/config';
 /// <reference path="../lib/db.d.ts" />
 
 declare global {
@@ -9,7 +9,7 @@ declare global {
       api: Record<string, any>;
       common: typeof common;
       db: (table: string) => typeof db;
-      config: ConfigType;
+      config: AppConfig;
       schemas: {
         api: Record<string, any>;
       };
