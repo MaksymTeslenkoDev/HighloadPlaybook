@@ -12,4 +12,13 @@ t.test('ping route is alive ', async (t) => {
   const res = await app.inject({ method: 'GET', url: '/ping' });
   t.equal(res.payload, 'OK');
 });
-t.todo('the application should not start ', async (t) => {});
+t.test('the application should not start ', async (t) => {
+  try {
+    //@ts-ignore
+    await build(t, { environment: 'TEST123' });
+    t.fail('the server must not start');
+  } catch (e) {
+    t.ok(e, 'error must be set');
+    t.match(e.message, 'Config file schema invalid')
+  }
+});

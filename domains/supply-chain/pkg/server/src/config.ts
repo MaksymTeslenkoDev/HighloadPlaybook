@@ -12,13 +12,20 @@ export function configLoader(path: { appPath: string }): AppConfig {
     throw new Error(`Config file not found at: ${configPath}`);
   }
   const config = JSON.parse(readFileSync(configPath).toString());
+  return validateConfig(config);
+}
+
+export function validateConfig(config: AppConfig) {
   const validator = TypeCompiler.Compile(ConfigSchema);
-  if (!validator.Check(config))
-    throw new Error(
-      `Config file schema invalid, ${[...validator.Errors(validator)].map(
-        (err) => err.message,
-      )}`,
-    );
+  if (!validator.Check(config)) {
+    throw new Error('Config file schema invalid', {
+      cause: [...validator.Errors(config)].map(({ path, message, value }) => ({
+        path,
+        message,
+        value,
+      })),
+    });
+  }
 
   return config;
 }

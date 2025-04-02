@@ -9,13 +9,11 @@ import serverOptions, { AppOptions } from './server.config';
 const appConfig = configLoader({ appPath: process.cwd() });
 const options = serverOptions(appConfig);
 
-const app: FastifyPluginAsync<
-  AppOptions & { testAppConfig?: AppConfig }
-> = async (fastify, opts): Promise<void> => {
-  const app = await loadApplication(process.cwd());
-  if (opts.testAppConfig) {
-    app.config = opts.testAppConfig;
-  }
+const app: FastifyPluginAsync<AppOptions & { config?: AppConfig }> = async (
+  fastify,
+  opts,
+): Promise<void> => {
+  const app = await loadApplication(process.cwd(), opts.config);
 
   fastify.register(Schemas, { schemas: app.schemas });
   fastify.register(http, { routes: app.api });
