@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
     "skipLibCheck": true,
     "sourceMap": true,
-    "module":"NodeNext",
-    "moduleResolution": "nodenext"
-  }
+  },
+  "include": ["**/*.ts", "schemas/**/*.ts"]
 }

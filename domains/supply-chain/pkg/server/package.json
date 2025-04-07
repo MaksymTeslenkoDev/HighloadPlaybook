@@ -2,19 +2,17 @@
   "name": "server",
   "version": "1.0.0",
   "description": "This project was bootstrapped with Fastify-CLI.",
-  "main": "app.ts",
+  "main": "server.ts",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "c8 tsx --test \"test/**/*.ts\"",
-    "test:tap":"tap run --coverage-report=json-summary", 
-    "start": "npm run build:ts && fastify start -l info dist/app.js --options",
-    "start:docker": "fastify start -l info app.js --options",
+    "test": "tap test/**/**.test.ts -- --no-check-coverage",
+    "test:coverage": "tap --coverage-report=html test/**/**.test.ts",
+    "start": "npm run build:ts && node dist/pkg/server/server.js",
+    "start:docker": "node pkg/server/server.js",
     "build:ts": "tsc",
-    "watch:ts": "tsc -w",
-    "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
-    "dev:start": "fastify start --ignore-watch=.ts$ -w dist/app.js --options"
+    "dev":"node --watch --import tsx ./server.ts"
   },
   "keywords": [],
   "author": "",
@@ -25,7 +23,9 @@
     "@sinclair/typebox": "^0.34.14",
     "fastify": "^5.0.0",
     "fastify-cli": "^7.4.0",
-    "fastify-plugin": "^5.0.0"
+    "fastify-plugin": "^5.0.0",
+    "kysely": "^0.27.6",
+    "mysql2": "^3.14.0"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",

@@ -15,6 +15,6 @@ docker volume create $VOLUME_NAME
 
 # Copy config file into volume
 echo "📂 Copying $CONFIG_FILE into $VOLUME_NAME..."
-docker run --rm -v $VOLUME_NAME:/config -v $(pwd)/$CONFIG_FILE:/tmp/server.config.json alpine sh -c "cp /tmp/server.config.json /config/server.config.json"
+docker run --rm -v $VOLUME_NAME:/config -v $(pwd)/$CONFIG_FILE:/tmp/app.config.json alpine sh -c "cp /tmp/app.config.json /config/app.config.json"
 
 echo "✅ Config successfully copied to Docker volume: $VOLUME_NAME"

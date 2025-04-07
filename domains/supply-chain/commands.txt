@@ -1,0 +1,5 @@
+chmod +x ./scripts/config.create.sh
+chmod +x ./scripts/config.update.sh
+
+Temp container to check volume
+docker run --rm -v server_config:/config alpine ls -la /config

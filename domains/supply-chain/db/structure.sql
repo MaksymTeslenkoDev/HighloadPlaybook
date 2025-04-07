@@ -1,3 +1,15 @@
+DROP table if EXISTS ManufacturingOrder;
+DROP table if EXISTS Inventory;
+DROP table if EXISTS Shipment;
+DROP table if EXISTS Warehouse;
+DROP table if EXISTS BillOfMaterials;
+DROP table if EXISTS OrderDetails;
+DROP table if EXISTS Product;
+DROP table if EXISTS Supplier;
+DROP table if EXISTS Orders;
+DROP table if EXISTS Customer;
+
+
 CREATE TABLE IF NOT EXISTS `Supplier` (
     supplier_id INT AUTO_INCREMENT PRIMARY KEY,
     supplier_name varchar(255) not null UNIQUE,
@@ -27,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `Product` (
 );
 
 -- Tracks which raw materials are required to manufacture a finished product.
-CREATE TABLE IF NOT EXISTS `Bill_of_Materials` (
+CREATE TABLE IF NOT EXISTS `BillOfMaterials` (
     bom_id INT AUTO_INCREMENT PRIMARY KEY,
     finished_product_id INT NOT NULL,
     component_product_id INT NOT NULL,
@@ -66,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `Orders` (
 );
 
 -- Tracks which products are included in an order.
-CREATE TABLE IF NOT EXISTS `Order_Details` (
+CREATE TABLE IF NOT EXISTS `OrderDetails` (
     order_detail_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
@@ -89,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `Shipment` (
 );
 
 -- Manufacturing Orders Table
-CREATE TABLE IF NOT EXISTS `Manufacturing_Order` (
+CREATE TABLE IF NOT EXISTS `ManufacturingOrder` (
     manufacturing_order_id INT AUTO_INCREMENT PRIMARY KEY,
     finished_product_id INT NOT NULL,
     quantity_to_produce INT NOT NULL,

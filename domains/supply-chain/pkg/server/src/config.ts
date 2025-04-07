@@ -30,6 +30,16 @@ export function validateConfig(config: AppConfig) {
   return config;
 }
 
+const dBConfigSchema = Type.Object({
+  connection: Type.Object({
+    host: Type.String(),
+    database: Type.String(),
+    user: Type.String(),
+    password: Type.String(),
+    port: Type.Optional(Type.Number()),
+  }),
+});
+
 export const ConfigSchema = Type.Object({
   environment: Type.Enum({
     development: 'DEVELOPMENT',
@@ -37,7 +47,7 @@ export const ConfigSchema = Type.Object({
     test: 'TEST',
   }),
   logger: Type.Object({
-    dir: Type.String(),
+    dir: Type.Optional(Type.String()),
     logLevel: Type.Enum({
       info: 'info',
       debug: 'debug',
@@ -45,7 +55,8 @@ export const ConfigSchema = Type.Object({
     }),
     pretty: Type.Optional(Type.Boolean()),
   }),
-  db: Type.Object({}),
+  db: dBConfigSchema,
 });
 
+export type DbConfig = Static<typeof dBConfigSchema>;
 export type AppConfig = Static<typeof ConfigSchema>;

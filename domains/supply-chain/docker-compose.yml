@@ -63,9 +63,9 @@ services:
 
   server:
     container_name: SCM_server
-    build:
-      dockerfile: Dockerfile
-      context: './pkg/server'
+    build: 
+      dockerfile: ./pkg/server/Dockerfile
+      context: .
     volumes:
       - server_config:/home/app/node/config
     networks:

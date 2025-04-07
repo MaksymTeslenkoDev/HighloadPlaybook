@@ -1,9 +1,14 @@
-const crud = (pool: any) => (table: string) => {
-  return {
-    async query() {},
-    async read() {},
-  };
+import * as mysql from 'mysql2';
+import { Kysely, MysqlDialect } from 'kysely';
+import { DB } from '../../../schemas/db/db';
+import { DbConfig } from '../src/config';
+
+const crud = (pool: mysql.Pool) => {
+  const db = new Kysely<DB>({
+    dialect: new MysqlDialect({ pool }),
+  });
+  return db;
 };
 
-// todo: crud accept real db provider poll, crud(db(options))
-export default (options: any) => crud(options);
+export default (options: DbConfig) =>
+  crud(mysql.createPool({ ...options.connection }));

@@ -19,7 +19,7 @@ INSERT INTO Product (name, category, supplier_id, price, is_finished_product) VA
 ('Smart Watch', 'Wearables', NULL, 300.00, TRUE);
 
 -- Seed data for Bill of Materials (BOM)
-INSERT INTO Bill_of_Materials (finished_product_id, component_product_id, quantity_required) VALUES
+INSERT INTO BillOfMaterials (finished_product_id, component_product_id, quantity_required) VALUES
 (4, 1, 1), -- Mobile Phone requires 1 CPU Chip
 (4, 2, 1), -- Mobile Phone requires 1 Screen Display
 (4, 3, 1), -- Mobile Phone requires 1 Battery Pack
@@ -48,7 +48,7 @@ INSERT INTO Orders (customer_id, order_date, status, customer_amount) VALUES
 (3, NOW(), 'Delivered', 1000.00);
 
 -- Seed data for Order Details
-INSERT INTO Order_Details (order_id, product_id, quantity, price) VALUES
+INSERT INTO OrderDetails (order_id, product_id, quantity, price) VALUES
 (1, 4, 2, 700.00), -- John Doe orders 2 Mobile Phones
 (2, 5, 1, 300.00), -- Alice Brown orders 1 Smart Watch
 (3, 4, 1, 700.00), -- Michael Smith orders 1 Mobile Phone
@@ -60,6 +60,6 @@ INSERT INTO Shipment (order_id, warehouse_id, shipment_date, delivery_date, stat
 (3, 3, NOW(), DATE_ADD(NOW(), INTERVAL 5 DAY), 'Delivered');
 
 -- Seed data for Manufacturing Orders
-INSERT INTO Manufacturing_Order (finished_product_id, quantity_to_produce, production_start_date, status) VALUES
+INSERT INTO ManufacturingOrder (finished_product_id, quantity_to_produce, production_start_date, status) VALUES
 (4, 50, NOW(), 'In Progress'),
 (5, 30, NOW(), 'Pending');

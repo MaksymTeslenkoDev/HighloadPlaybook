@@ -1,6 +1,6 @@
 import * as fsp from 'node:fs/promises';
 import * as path from 'node:path';
-import { AppConfig, configLoader, validateConfig } from './config';
+import { AppConfig, validateConfig } from './config';
 import common from '../lib/common';
 import dbBuilder from '../lib/db';
 
@@ -59,7 +59,7 @@ export function flatObject(
   return result;
 }
 
-export async function loadApplication(appPath: string, config?: AppConfig) {
+export async function loadApplication(appPath: string, config: AppConfig) {
   const sandbox: Partial<app.Sandbox> = {
     common,
     api: {},
@@ -70,7 +70,7 @@ export async function loadApplication(appPath: string, config?: AppConfig) {
   const apiSchemasPath = path.join(appPath, './schemas');
   const apiSchemas = await loadDir(apiSchemasPath, sandbox);
 
-  config = config ? validateConfig(config) : configLoader({ appPath });
+  config = validateConfig(config);
   const db = dbBuilder(config.db);
   Object.assign(sandbox, {
     api: Object.freeze(api),

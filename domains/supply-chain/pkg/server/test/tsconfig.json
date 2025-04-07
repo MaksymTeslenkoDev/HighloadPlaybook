@@ -3,7 +3,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "noEmit": true,
-    "useUnknownInCatchVariables": false
   },
   "include": ["../**/*.ts", "**/*.ts"]
 }

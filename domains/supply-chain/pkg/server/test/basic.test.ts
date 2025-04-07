@@ -19,6 +19,6 @@ t.test('the application should not start ', async (t) => {
     t.fail('the server must not start');
   } catch (e) {
     t.ok(e, 'error must be set');
-    t.match(e.message, 'Config file schema invalid')
+    t.match(e.message, 'Config file schema invalid');
   }
 });

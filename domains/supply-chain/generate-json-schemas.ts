@@ -1,9 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import * as fs from 'fs';
+import * as path from 'path';
+import { pathToFileURL } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const SCHEMAS_DIR = path.join(__dirname, '../schemas');
 const OUTPUT_DIR = path.join(SCHEMAS_DIR, 'json');

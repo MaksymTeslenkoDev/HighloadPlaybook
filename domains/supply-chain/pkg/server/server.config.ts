@@ -4,6 +4,23 @@ import { join } from 'node:path';
 
 export interface AppOptions extends FastifyServerOptions {}
 const config = ({ logger }: AppConfig): AppOptions => {
+  
+  const targets = [
+    {
+      target: logger.pretty ? 'pino-pretty' : 'pino/file',
+      options: { destination: 1 },
+    },
+  ];
+
+  if (logger.dir) {
+    targets.push({
+      target: 'pino/file',
+      options: {
+        //@ts-ignore
+        destination: join(__dirname, logger.dir, 'app.log'),
+      },
+    });
+  }
   return {
     disableRequestLogging: true,
     requestIdLogLabel: 'reqId',
@@ -16,18 +33,7 @@ const config = ({ logger }: AppConfig): AppOptions => {
     logger: {
       level: logger.logLevel || 'info',
       transport: {
-        targets: [
-          {
-            target: 'pino/file',
-            options: {
-              destination: join(process.cwd(), logger.dir, 'app.log'),
-            },
-          },
-          {
-            target: logger.pretty ? 'pino-pretty' : 'pino/file',
-            options: { destination: 1 },
-          },
-        ],
+        targets,
       },
       timestamp: () => {
         const dateString = new Date(Date.now()).toISOString();

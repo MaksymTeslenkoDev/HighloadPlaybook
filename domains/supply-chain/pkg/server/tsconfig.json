@@ -1,8 +1,10 @@
 {
-  "extends": ["fastify-tsconfig", "@fastify/websocket"],
+  "extends": ["fastify-tsconfig", "@fastify/websocket", "../../tsconfig.json"],
   "compilerOptions": {
     "outDir": "dist",
-    "sourceMap": true
+    "sourceMap": true,
+    "useUnknownInCatchVariables": false,
+    "rootDir": "../../"
   },
-  "include": ["**/*.ts", "app.ts"]
+  "include": ["**/*.ts", "app.ts", "logs"]
 }

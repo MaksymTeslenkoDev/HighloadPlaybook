@@ -23,8 +23,8 @@ if [ ! -f "$CONFIG_PATH" ]; then
 fi
 
 # Copy the config file into the running container
-echo "Copying $CONFIG_PATH into $SERVICE:/home/app/node/config/server.config.json..."
-docker cp "$CONFIG_PATH" "$SERVICE:/home/app/node/config/server.config.json"
+echo "Copying $CONFIG_PATH into $SERVICE:/home/app/node/config/app.config.json..."
+docker cp "$CONFIG_PATH" "$SERVICE:/home/app/node/config/app.config.json"
 
 # Restart the container to apply changes
 echo "Restarting container: $SERVICE..."
