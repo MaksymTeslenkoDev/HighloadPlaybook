@@ -1,23 +1,6 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyInstance } from 'fastify';
-
-enum APP_ERROR_CODES {
-  SystemError = '000',
-  ClientError = '001',
-  ValidationError = '002',
-  NotFound = '003',
-}
-
-class ServerError extends Error {
-  constructor(
-    public message: string,
-    public code: APP_ERROR_CODES = APP_ERROR_CODES.ClientError,
-    public systemCode: number = 400,
-  ) {
-    super();
-    this.code;
-  }
-}
+import { APP_ERROR_CODES, ServerError } from '../src/error';
 
 type ApiResponse = {
   success: boolean;

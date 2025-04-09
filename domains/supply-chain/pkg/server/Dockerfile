@@ -23,6 +23,7 @@ ENV APP_HOME=$HOME/node/
 ENV NODE_ENV=production
 ENV CONFIG_PATH=../../config/app.config.json
 ENV PORT=8081
+ENV HOST=0.0.0.0
 
 WORKDIR $APP_HOME
 

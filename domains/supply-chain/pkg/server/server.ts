@@ -13,11 +13,12 @@ import { configLoader } from './src/config';
 
   application
     .listen({
-      host: '0.0.0.0',
-      port: Number(process.env.PORT) || 3000,
+      host: process.env.HOST || 'localhost',
+      port: process.env.PORT ? Number(process.env.PORT) : 3000,
     })
     .catch((err) => {
-      application.log.error('Error during server start ', err);
+      application.log.error(`Error during server start ${err}`);
+      console.log(err);
       process.exit(1);
     });
 
