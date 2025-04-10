@@ -12,7 +12,7 @@
     "start": "npm run build:ts && node dist/pkg/server/server.js",
     "start:docker": "node pkg/server/server.js",
     "build:ts": "tsc",
-    "dev":"node --watch --import tsx ./server.ts"
+    "dev": "node --watch --import tsx ./server.ts"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "@fastify/sensible": "^6.0.0",
     "@fastify/websocket": "^11.0.1",
     "@sinclair/typebox": "^0.34.14",
+    "dockerode": "^4.0.5",
     "fastify": "^5.0.0",
     "fastify-cli": "^7.4.0",
     "fastify-plugin": "^5.0.0",

@@ -1,0 +1,10 @@
+DROP table if EXISTS ManufacturingOrder;
+DROP table if EXISTS Inventory;
+DROP table if EXISTS Shipment;
+DROP table if EXISTS Warehouse;
+DROP table if EXISTS BillOfMaterials;
+DROP table if EXISTS OrderDetails;
+DROP table if EXISTS Product;
+DROP table if EXISTS Supplier;
+DROP table if EXISTS Orders;
+DROP table if EXISTS Customer;

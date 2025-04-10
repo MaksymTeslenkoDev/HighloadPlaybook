@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
+import * as path from 'node:path';
 import { loadApplication } from './src/load';
-import { AppConfig} from './src/config';
+import { AppConfig } from './src/config';
 import Schemas from './plugins/api-schemas-loader';
 import WS from './plugins/ws';
 import http from './plugins/http';
@@ -10,7 +11,14 @@ const app: FastifyPluginAsync<AppOptions & { config: AppConfig }> = async (
   fastify,
   opts,
 ): Promise<void> => {
-  const app = await loadApplication(__dirname, opts.config);
+  const appPath = path.join(process.cwd(), '../server');
+
+  const sandbox = {
+    appPath,
+    logger: fastify.log,
+  };
+
+  const app = await loadApplication(__dirname, opts.config, sandbox);
 
   fastify.register(Schemas, { schemas: app.schemas });
   fastify.register(http, { routes: app.api });

@@ -59,11 +59,13 @@ export function flatObject(
   return result;
 }
 
-export async function loadApplication(appPath: string, config: AppConfig) {
-  const sandbox: Partial<app.Sandbox> = {
-    common,
-    api: {},
-  };
+export async function loadApplication(
+  appPath: string,
+  config: AppConfig,
+  sandbox: Partial<app.Sandbox>,
+) {
+  sandbox.common = common;
+  sandbox.api = {};
   const apiPath = path.join(appPath, './api');
   const api = await loadDir(apiPath, sandbox);
 
@@ -71,7 +73,8 @@ export async function loadApplication(appPath: string, config: AppConfig) {
   const apiSchemas = await loadDir(apiSchemasPath, sandbox);
 
   config = validateConfig(config);
-  const db = dbBuilder(config.db);
+  const db = await dbBuilder(config.db)(sandbox as app.Sandbox);
+
   Object.assign(sandbox, {
     api: Object.freeze(api),
     config: Object.freeze(config),

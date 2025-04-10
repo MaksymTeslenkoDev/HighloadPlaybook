@@ -1,4 +1,4 @@
-import fastify from 'fastify';
+import fastify, { FastifyBaseLogger } from 'fastify';
 import common from '../lib/common';
 import { AppConfig } from '../../server/src/config';
 import { Kysely } from 'kysely';
@@ -8,6 +8,8 @@ import { DB } from '../../../schemas/db/db';
 declare global {
   namespace app {
     type Sandbox = {
+      appPath: string;
+      logger: FastifyBaseLogger;
       api: Record<string, any>;
       common: typeof common;
       db: Kysely<DB>;

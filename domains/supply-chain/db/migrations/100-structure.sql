@@ -1,16 +1,4 @@
-DROP table if EXISTS ManufacturingOrder;
-DROP table if EXISTS Inventory;
-DROP table if EXISTS Shipment;
-DROP table if EXISTS Warehouse;
-DROP table if EXISTS BillOfMaterials;
-DROP table if EXISTS OrderDetails;
-DROP table if EXISTS Product;
-DROP table if EXISTS Supplier;
-DROP table if EXISTS Orders;
-DROP table if EXISTS Customer;
-
-
-CREATE TABLE IF NOT EXISTS `Supplier` (
+CREATE TABLE `Supplier` (
     supplier_id INT AUTO_INCREMENT PRIMARY KEY,
     supplier_name varchar(255) not null UNIQUE,
     brand_name varchar(255) not null,
@@ -19,16 +7,7 @@ CREATE TABLE IF NOT EXISTS `Supplier` (
     location VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE IF NOT EXISTS `Warehouse` (
-    warehouse_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255), 
-    location VARCHAR(255) NOT NULL,
-    capacity INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS `Product` (
+CREATE TABLE `Product` (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     category VARCHAR(255),
@@ -37,8 +16,21 @@ CREATE TABLE IF NOT EXISTS `Product` (
     is_finished_product BOOLEAN DEFAULT FALSE, 
     FOREIGN KEY (supplier_id) REFERENCES Supplier(supplier_id) ON DELETE SET NULL
 );
-
--- Tracks which raw materials are required to manufacture a finished product.
+CREATE TABLE IF NOT EXISTS `Customer` (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone_number VARCHAR(20),
+    address TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE `Warehouse` (
+    warehouse_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255), 
+    location VARCHAR(255) NOT NULL,
+    capacity INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 CREATE TABLE IF NOT EXISTS `BillOfMaterials` (
     bom_id INT AUTO_INCREMENT PRIMARY KEY,
     finished_product_id INT NOT NULL,
@@ -47,7 +39,6 @@ CREATE TABLE IF NOT EXISTS `BillOfMaterials` (
     FOREIGN KEY (finished_product_id) REFERENCES Product(product_id) ON DELETE CASCADE,
     FOREIGN KEY (component_product_id) REFERENCES Product(product_id) ON DELETE CASCADE
 );
-
 CREATE TABLE IF NOT EXISTS `Inventory` (
     inventory_id INT AUTO_INCREMENT PRIMARY KEY,
     warehouse_id INT NOT NULL,
@@ -57,15 +48,6 @@ CREATE TABLE IF NOT EXISTS `Inventory` (
     FOREIGN KEY (warehouse_id) REFERENCES Warehouse(warehouse_id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE,
     UNIQUE (warehouse_id, product_id)
-);
-
-CREATE TABLE IF NOT EXISTS `Customer` (
-    customer_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255),
-    email VARCHAR(255) NOT NULL UNIQUE,
-    phone_number VARCHAR(20),
-    address TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS `Orders` (
